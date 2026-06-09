@@ -43,6 +43,13 @@ new class extends Component
         $this->dispatch('show-edit-modal');
     }
 
+    public function save()
+    {
+        LivewireAlert::title('Changes saved!')
+            ->success()
+            ->show();
+    }
+
 
     public function akunUpdate()
     {
@@ -78,12 +85,12 @@ new class extends Component
             $this->dispatch('hide-edit-modal');
             $this->reset();
             $this->dispatch('success');
-            LivewireAlert::title('Berhasil')
-                ->text('Kamu berhasil mengubah akun')
+            LivewireAlert::title('Berhasil Edit')
+                ->text('Berhasil edit data karyawan')
                 ->success()
+                ->timer(3000)
                 ->toast()
                 ->position('top-end')
-                ->timer(3000)
                 ->show();
         }
     }
@@ -152,6 +159,8 @@ new class extends Component
             </div>
         </div>
     </div>
+
+    <button type="button" wire:click="save">Test Toast</button>
 </div>
 
 <script>

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->boolean('is_password_default')->default(false);
             $table->string('password');
             $table->foreignId('role_id')->constrained('roles', 'role_id');
+            $table->string('photo_profile')->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

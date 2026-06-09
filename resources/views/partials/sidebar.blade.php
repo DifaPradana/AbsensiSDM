@@ -16,6 +16,7 @@
                     <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
                     <span class="hide-menu">Home</span>
                 </li>
+                @if (auth()->user()->role_id == '1')
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="{{ route('dashboard.page') }}" wire:navigate aria-expanded="false">
                         <span>
@@ -44,16 +45,26 @@
                         <span class="hide-menu">Absensi</span>
                     </a>
                 </li>
+                @elseif (auth()->user()->role_id == '2' && '3')
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="{{route('karyawan.absensi.page')}}" wire:navigate aria-expanded="false">
+                        <span>
+                            <i class="ti ti-file-description"></i>
+                        </span>
+                        <span class="hide-menu">Absensi</span>
+                    </a>
+                </li>
+                @endif
                 <li class="nav-small-cap">
                     <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-                    <span class="hide-menu">UI COMPONENTS</span>
+                    <span class="hide-menu">Profile</span>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="./ui-buttons.html" aria-expanded="false">
+                    <a class="sidebar-link" href="{{route('karyawan.profile.page')}}" aria-expanded="false">
                         <span>
-                            <i class="ti ti-article"></i>
+                            <i class="ti ti-user"></i>
                         </span>
-                        <span class="hide-menu">Buttons</span>
+                        <span class="hide-menu">Profile</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
@@ -93,21 +104,27 @@
                     <span class="hide-menu">AUTH</span>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="./authentication-login.html" aria-expanded="false">
+                    <a href="#"
+                        class="sidebar-link"
+                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                         <span>
-                            <i class="ti ti-login"></i>
+                            <i class="ti ti-logout"></i>
                         </span>
-                        <span class="hide-menu">Login</span>
+                        <span class="hide-menu">Logout</span>
                     </a>
+
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                        @csrf
+                    </form>
                 </li>
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="./authentication-register.html" aria-expanded="false">
-                        <span>
-                            <i class="ti ti-user-plus"></i>
-                        </span>
-                        <span class="hide-menu">Register</span>
-                    </a>
-                </li>
+                <!-- <li class="sidebar-item">
+                        <a class="sidebar-link" href="./authentication-register.html" aria-expanded="false">
+                            <span>
+                                <i class="ti ti-user-plus"></i>
+                            </span>
+                            <span class="hide-menu">Register</span>
+                        </a>
+                    </li> -->
                 <li class="nav-small-cap">
                     <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
                     <span class="hide-menu">EXTRA</span>

@@ -36,16 +36,32 @@ new class extends Component {
             return;
         }
 
+        $user = Auth::user();
+
         request()->session()->regenerate();
         $this->dispatch('notify', [
             'type' => 'success',
             'message' => 'Berhasil Login'
         ]);
 
-        return $this->redirectRoute('dashboard.page', navigate: true);
+        $user = Auth::user();
 
+        switch ($user->role_id) {
+            case '1':
+                $route = 'dashboard.page';
+                break;
 
-        return $this->redirectRoute('dashboard.page');
+            case '2':
+            case '3':
+                $route = 'karyawan.absensi.page';
+                break;
+
+            default:
+                $route = 'karyawan.absensi.page';
+                break;
+        }
+
+        return $this->redirectRoute($route, navigate: true);
     }
 };
 ?>

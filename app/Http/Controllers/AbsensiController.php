@@ -187,7 +187,6 @@ class AbsensiController extends Controller
             }
         }
 
-
         $photoField = $isAbsenMasuk ? 'photo_masuk' : 'photo_pulang';
         $uploadedFile = $request->file($photoField);
 
@@ -229,11 +228,6 @@ class AbsensiController extends Controller
             default => 'On Time',
         };
 
-        // dd([
-        //     'now' => now()->toDateTimeString(),
-        //     'timezone' => now()->timezoneName,
-        // ]);
-
         if ($isAbsenMasuk) {
 
 
@@ -262,7 +256,6 @@ class AbsensiController extends Controller
 
         $statusAbsensiPulang = 'On Time';
 
-        // Lembur hanya jika > 60 menit setelah jadwal pulang
         if ($waktuAbsen->greaterThan($jadwalPulangRole->copy()->addMinutes(60))) {
             $selisihMenit = $jadwalPulangRole->diffInMinutes($waktuAbsen);
 
@@ -291,10 +284,6 @@ class AbsensiController extends Controller
                 $statusAbsensiPulang = "Pulang Lebih Cepat {$selisihMenit} Menit";
             }
         }
-
-
-
-        // dd($statusAbsensiPulang);
 
         $absensiAktif->update([
             'waktu_absen_pulang' => now(),

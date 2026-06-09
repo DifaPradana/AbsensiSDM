@@ -34,7 +34,8 @@ class User extends Authenticatable
         'password',
         'is_active',
         'is_password_default',
-        'role_id'
+        'role_id',
+        'photo_profile'
     ];
 
     protected $hidden = [
@@ -74,5 +75,12 @@ class User extends Authenticatable
     public function user()
     {
         return $this->belongsTo(User::class)->withTrashed();
+    }
+
+    public function getPhotoUrlAttribute()
+    {
+        return $this->photo_profile
+            ? asset('storage/' . $this->photo_profile)
+            : asset('assets/images/profile/user-1.jpg');
     }
 }
