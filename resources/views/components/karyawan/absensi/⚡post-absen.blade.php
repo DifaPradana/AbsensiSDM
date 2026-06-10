@@ -9,6 +9,7 @@ use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
 use Illuminate\Support\Str;
 use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -69,6 +70,13 @@ new class extends Component
 
         if ($validate->fails()) {
             $this->dispatch('absen-error', message: $validate->errors()->first());
+            LivewireAlert::title($validate->errors()->first())
+                ->error()
+                ->timer(null)
+                ->toast()
+                ->withConfirmButton('Got it')
+                ->withOptions(['allowOutsideClick' => false])
+                ->show();
             return;
         }
 
@@ -132,13 +140,15 @@ new class extends Component
                 'note_masuk'           => $this->note,
             ]);
 
-            $this->dispatch('absen-success', message: 'Berhasil melakukan absensi masuk', type: 'masuk');
-            LivewireAlert::title('Absensi Masuk Berhasil')
+
+            LivewireAlert::title('Absensi Berhasil')
                 ->success()
-                ->timer(null)
-                ->toast()
-                ->withConfirmButton('Got it')
+                ->withOptions(['allowOutsideClick' => false])
+                ->withConfirmButton('OK')
+                ->onConfirm('reloadPage')
                 ->show();
+
+            $this->dispatch('absen-success');
             return;
         }
 
@@ -175,14 +185,12 @@ new class extends Component
             'note_pulang'           => $this->note,
         ]);
 
-        $this->reset();
-
         $this->dispatch('absen-success');
-        LivewireAlert::title('Absensi Pulang Berhasil')
+        LivewireAlert::title('Absensi Berhasil')
             ->success()
-            ->timer(null)
-            ->toast()
-            ->withConfirmButton('Got it')
+            ->withOptions(['allowOutsideClick' => false])
+            ->withConfirmButton('OK')
+            ->onConfirm('reloadPage')
             ->show();
         return;
     }
@@ -194,6 +202,11 @@ new class extends Component
         $dLng = deg2rad($lng2 - $lng1);
         $a    = sin($dLat / 2) ** 2 + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dLng / 2) ** 2;
         return $earthRadius * 2 * atan2(sqrt($a), sqrt(1 - $a));
+    }
+    #[On('absen-success')]
+    public function reloadPage()
+    {
+        $this->redirectRoute('karyawan.kehadiran.page');
     }
 };
 ?>
@@ -207,6 +220,10 @@ new class extends Component
                 <input type="hidden" wire:model.live="longitude" id="longitude">
                 <p class="section-label">Foto Selfie</p>
                 <input type="file" wire:model="photo" accept="image/*" capture="user" class="form-control" id="photo">
+                <div wire:loading wire:target="photo" class="text-primary mt-2">
+                    <span class="spinner-border spinner-border-sm"></span>
+                    Uploading...
+                </div>
 
                 <div class="divider"></div>
 
@@ -227,7 +244,12 @@ new class extends Component
 
                 <div class="divider"></div>
 
-                <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                    style="width:100%;justify-content:center;"
+                    wire:loading.attr="disabled"
+                    wire:target="photo, absen">
                     <i class="ti ti-send" style="font-size:15px;"></i>
                     <span>Kirim Presensi</span>
                 </button>
@@ -235,10 +257,18 @@ new class extends Component
         </div>
     </form>
 
+
     <script>
         document.querySelector('form').addEventListener('submit', function() {
             $wire.set('latitude', document.getElementById('latitude').value);
             $wire.set('longitude', document.getElementById('longitude').value);
+        });
+
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('reload-page', () => {
+                alert('reload-page diterima');
+                window.location.reload();
+            });
         });
 
 
@@ -263,7 +293,7 @@ new class extends Component
                         // alert('Masuk callback GPS');
 
                         // Livewire.all().forEach(c => {
-                        //     alert(c.name);
+                        // alert(c.name);
                         // });
 
                         const lat = pos.coords.latitude.toFixed(7);
@@ -290,12 +320,7 @@ new class extends Component
 
                             // alert('berhasil');
                         } catch (e) {
-                            alert(
-                                'ERROR\n\n' +
-                                e.message +
-                                '\n\n' +
-                                e.stack
-                            );
+                            window.location.reload();
                         }
 
                     },

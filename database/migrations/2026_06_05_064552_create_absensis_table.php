@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('absensis', function (Blueprint $table) {
             $table->id('absensi_id');
             $table->foreignId('user_id')->constrained('users', 'user_id');
-            $table->enum('tipe_absensi', ['masuk', 'sakit', 'izin', 'alpha'])->default('masuk');
+            $table->enum('tipe_absensi', ['hadir', 'sakit', 'izin', 'alpha'])->default('hadir');
             $table->string('photo_masuk')->nullable();
             $table->string('photo_pulang')->nullable();
             $table->dateTime('waktu_absen_masuk')->nullable();

@@ -305,4 +305,187 @@
             /* lebih soft */
         }
     }
+
+    .abs-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .abs-card {
+        background: #fff;
+        border: 0.5px solid rgba(118, 114, 114, 0.12);
+        border-radius: 12px;
+        padding: 14px 16px;
+        transition: border-color 0.15s;
+    }
+
+    /* .abs-card:hover {
+        border-color: rgba(0, 0, 0, 0.25);
+    } */
+
+    .abs-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+    }
+
+    .abs-date {
+        font-size: 14px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .abs-date i {
+        font-size: 16px;
+        color: #888;
+    }
+
+    .abs-body {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .abs-section {
+        background: #ffffff;
+        border-radius: 8px;
+        border: 0.5px solid rgba(118, 114, 114, 0.12);
+        padding: 10px 12px;
+    }
+
+    .abs-section-title {
+        font-size: 11px;
+        font-weight: 500;
+        color: #888;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .abs-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        margin-bottom: 6px;
+        font-size: 13px;
+    }
+
+    .abs-label {
+        color: #888;
+        min-width: 52px;
+        font-size: 12px;
+        flex-shrink: 0;
+    }
+
+    .abs-val {
+        color: #1a1a1a;
+    }
+
+    .abs-note {
+        font-style: italic;
+        color: #888;
+    }
+
+    .abs-muted {
+        color: #aaa;
+    }
+
+    .abs-link {
+        color: #185FA5;
+        text-decoration: none;
+    }
+
+    .abs-link:hover {
+        text-decoration: underline;
+    }
+
+    .abs-badge {
+        font-size: 11px;
+        font-weight: 500;
+        padding: 3px 9px;
+        border-radius: 20px;
+        display: inline-block;
+    }
+
+    .abs-badge-hadir {
+        background: #EAF3DE;
+        color: #3B6D11;
+    }
+
+    .abs-badge-izin {
+        background: #FAEEDA;
+        color: #854F0B;
+    }
+
+    .abs-badge-sakit {
+        background: #E6F1FB;
+        color: #185FA5;
+    }
+
+    .abs-badge-alfa {
+        background: #FCEBEB;
+        color: #A32D2D;
+    }
+
+    .abs-badge-default {
+        background: #f0f0ee;
+        color: #555;
+    }
+
+    .abs-badge-terlambat {
+        background: #FCEBEB;
+        color: #A32D2D;
+    }
+
+    .abs-badge-tepat {
+        background: #EAF3DE;
+        color: #3B6D11;
+    }
+
+    .abs-badge-cepat {
+        background: #FAEEDA;
+        color: #854F0B;
+    }
+
+    .abs-photo-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 12px;
+        padding: 3px 10px;
+        border-radius: 8px;
+        border: 0.5px solid rgba(0, 0, 0, 0.2);
+        background: #fff;
+        color: #555;
+        cursor: pointer;
+        transition: background 0.12s;
+    }
+
+    .abs-photo-btn:hover {
+        background: #ebebeb;
+    }
+
+    .abs-empty {
+        text-align: center;
+        padding: 2rem;
+        color: #aaa;
+        font-size: 14px;
+    }
+
+    @media (max-width: 576px) {
+        .abs-body {
+            grid-template-columns: 1fr;
+        }
+
+        .abs-summary-bar {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
 </style>

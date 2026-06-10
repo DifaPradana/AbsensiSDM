@@ -44,26 +44,24 @@ new class extends Component
 ?>
 
 <div>
-    <div class="wrap">
-        <div class="card-header" style="background:var(--color-background-primary);border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-tertiary);margin-bottom:1rem;display:flex;align-items:center;gap:10px;">
-            <div style="width:36px;height:36px;border-radius:var(--border-radius-md);background:#E6F1FB;display:flex;align-items:center;justify-content:center;">
-                <i class="ti ti-fingerprint" style="font-size:20px;color:#185FA5;"></i>
-            </div>
-            <div>
-                <h2 style="font-size:16px;font-weight:500;color:var(--color-text-primary);">{{ $this->statusPresensi }}</h2>
-            </div>
+    <div class="card-header" style="background:var(--color-background-primary);border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-tertiary);margin-bottom:1rem;display:flex;align-items:center;gap:10px;">
+        <div style="width:36px;height:36px;border-radius:var(--border-radius-md);background:#E6F1FB;display:flex;align-items:center;justify-content:center;">
+            <i class="ti ti-fingerprint" style="font-size:20px;color:#185FA5;"></i>
         </div>
-
-        <div id="alert-box" style="display:none;margin-bottom:1rem;" class="alert"></div>
-        @if ($this->statusPresensi == "Presensi Hari Ini Selesai")
-        <div class="card">
-            <div class="card-body">
-                <h2 style="font-size:16px;font-weight:500;color:var(--color-text-primary);">Absensi Hari Ini Sudah Lengkap</h2>
-            </div>
+        <div>
+            <h2 style="font-size:16px;font-weight:500;color:var(--color-text-primary);">{{ $this->statusPresensi }}</h2>
         </div>
-        @else
-        <livewire:karyawan.absensi.post-absen />
-        @endif
-
     </div>
+
+    <div id="alert-box" style="display:none;margin-bottom:1rem;" class="alert"></div>
+    @if ($this->statusPresensi == "Presensi Hari Ini Selesai")
+    <div class="card">
+        <div class="card-body">
+            <h2 style="font-size:16px;font-weight:500;color:var(--color-text-primary);">Absensi Hari Ini Sudah Lengkap</h2>
+        </div>
+    </div>
+    @else
+    <livewire:karyawan.absensi.post-absen />
+    @endif
+
 </div>

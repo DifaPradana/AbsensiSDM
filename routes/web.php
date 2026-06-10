@@ -18,4 +18,6 @@ Route::group(['middleware' => ['auth', 'role:Admin'], 'prefix' => 'admin'], func
 Route::group(['middleware' => ['auth', 'role:Pegawai Kantor, Pegawai Lapangan'], 'prefix' => 'karyawan'], function () {
     Route::livewire('/post-absensi', 'karyawan.absensi')->name('karyawan.absensi.page');
     Route::livewire('/profile', 'karyawan.profile')->name('karyawan.profile.page');
+    Route::livewire('/riwayat-kehadiran', 'karyawan.kehadiran')->name('karyawan.kehadiran.page');
+    Route::livewire('/izin-absen', 'karyawan.izin-absen')->name('karyawan.izin-absen.page');
 });

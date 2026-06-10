@@ -126,6 +126,9 @@ new class extends Component
 
                                             <input type="file" wire:model="photo" accept="image/*" hidden>
 
+                                            @error('photo_profile')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
                                         </div>
 
                                     </label>
@@ -143,10 +146,14 @@ new class extends Component
                                     <div style="position:relative; display:flex; align-items:center;">
 
                                         <input
-                                            type="password"
+                                            type="password" wire:model="password"
                                             class="form-control"
                                             id="password"
                                             style="padding-right:40px;">
+
+                                        @error('password')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
 
                                         <span
                                             onclick="togglePassword()"
