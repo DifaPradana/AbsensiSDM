@@ -10,7 +10,7 @@ class Role extends Model
 
     protected $primaryKey = 'role_id';
 
-    protected $fillable = ['nama_role'];
+    protected $fillable = ['nama_role', 'jadwal_masuk', 'jadwal_pulang'];
 
     public function users()
     {

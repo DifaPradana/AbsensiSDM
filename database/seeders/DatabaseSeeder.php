@@ -19,25 +19,25 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         Role::create([
-            'nama_role' => 'Admin',
+            'nama_role' => 'admin',
             'jadwal_masuk' => '12:00:00',
             'jadwal_pulang' => '12:00:00',
         ]);
 
         Role::create([
-            'nama_role' => 'Pegawai Kantor',
+            'nama_role' => 'pegawai kantor',
             'jadwal_masuk' => '08:00:00',
             'jadwal_pulang' => '17:00:00',
         ]);
 
         Role::create([
-            'nama_role' => 'Pegawai Lapangan',
+            'nama_role' => 'pegawai lapangan',
             'jadwal_masuk' => '07:00:00',
             'jadwal_pulang' => '16:00:00',
         ]);
 
         Role::create([
-            'nama_role' => 'Test Role',
+            'nama_role' => 'test role',
             'jadwal_masuk' => '08:30:00',
             'jadwal_pulang' => '10:00:00',
         ]);
@@ -73,25 +73,41 @@ class DatabaseSeeder extends Seeder
             'radius_meter' => 50
         ]);
 
+        Absensi::create([
+            'user_id' => 2,
+            'tipe_absensi' => 'hadir',
+            'photo_masuk' => 'absensi/9746821a-1dc0-4ee9-8a36-8249933a1d27.jpg',
+            'photo_pulang' => 'absensi/9746821a-1dc0-4ee9-8a36-8249933a1d27.jpg',
+            'waktu_absen_masuk' => '2026-06-08 16:25:33',
+            'waktu_absen_pulang' => '2026-06-08 17:00:45',
+            'latitude_masuk' => -7.685434,
+            'longitude_masuk' => 109.042733,
+            'latitude_pulang' => -7.685434,
+            'longitude_pulang' => 109.042733,
+            'status_absensi_masuk' => 'Terlambat lebih dari 1 Jam',
+            'status_absensi_pulang' => 'On Time',
+            'lokasi_masuk' => 'Unknown',
+            'lokasi_pulang' => 'Unknown',
+        ]);
+        Absensi::create([
+            'user_id' => 2,
+            'tipe_absensi' => 'hadir',
+            'photo_masuk' => 'absensi/9746821a-1dc0-4ee9-8a36-8249933a1d27.jpg',
+            'photo_pulang' => null,
+            'waktu_absen_masuk' => '2026-06-10 16:25:33',
+            // 'waktu_absen_pulang' => '2026-06-10 17:00:45',
+            'latitude_masuk' => -7.685434,
+            'longitude_masuk' => 109.042733,
+            // 'latitude_pulang' => -7.685434,
+            // 'longitude_pulang' => 109.042733,
+            'status_absensi_masuk' => 'Terlambat lebih dari 1 Jam',
+            // 'status_absensi_pulang' => 'On Time',
+            'lokasi_masuk' => 'Unknown',
+            // 'lokasi_pulang' => 'Unknown',
+        ]);
         // Absensi::create([
         //     'user_id' => 3,
-        //     'tipe_absensi' => 'masuk',
-        //     'photo_masuk' => 'absensi/9746821a-1dc0-4ee9-8a36-8249933a1d27.jpg',
-        //     'photo_pulang' => null,
-        //     'waktu_absen_masuk' => '2026-06-08 16:25:33',
-        //     'waktu_absen_pulang' => '2026-06-08 17:00:45',
-        //     'latitude_masuk' => -7.685434,
-        //     'longitude_masuk' => 109.042733,
-        //     'latitude_pulang' => -7.685434,
-        //     'longitude_pulang' => 109.042733,
-        //     'status_absensi_masuk' => 'Terlambat lebih dari 1 Jam',
-        //     'status_absensi_pulang' => 'On Time',
-        //     'lokasi_masuk' => 'Unknown',
-        //     'lokasi_pulang' => 'Unknown',
-        // ]);
-        // Absensi::create([
-        //     'user_id' => 3,
-        //     'tipe_absensi' => 'masuk',
+        //     'tipe_absensi' => 'hadir',
         //     'photo_masuk' => 'absensi/9746821a-1dc0-4ee9-8a36-8249933a1d27.jpg',
         //     'photo_pulang' => null,
         //     'waktu_absen_masuk' => '2026-06-03 09:57:45',
@@ -109,7 +125,7 @@ class DatabaseSeeder extends Seeder
         // ]);
         // Absensi::create([
         //     'user_id' => 3,
-        //     'tipe_absensi' => 'masuk',
+        //     'tipe_absensi' => 'hadir',
         //     'photo_masuk' => 'absensi/9746821a-1dc0-4ee9-8a36-8249933a1d27.jpg',
         //     'photo_pulang' => null,
         //     'waktu_absen_masuk' => '2026-06-02 09:57:45',
@@ -128,7 +144,7 @@ class DatabaseSeeder extends Seeder
 
         // Absensi::create([
         //     'user_id' => 3,
-        //     'tipe_absensi' => 'masuk',
+        //     'tipe_absensi' => 'hadir',
         //     'photo_masuk' => 'absensi/9746821a-1dc0-4ee9-8a36-8249933a1d27.jpg',
         //     'photo_pulang' => null,
         //     'waktu_absen_masuk' => '2026-06-01 09:57:45',
@@ -147,7 +163,7 @@ class DatabaseSeeder extends Seeder
 
         // Absensi::create([
         //     'user_id' => 3,
-        //     'tipe_absensi' => 'masuk',
+        //     'tipe_absensi' => 'hadir',
         //     'photo_masuk' => 'absensi/9746821a-1dc0-4ee9-8a36-8249933a1d27.jpg',
         //     'photo_pulang' => null,
         //     'waktu_absen_masuk' => '2026-05-31 09:57:45',
@@ -166,7 +182,7 @@ class DatabaseSeeder extends Seeder
 
         // Absensi::create([
         //     'user_id' => 3,
-        //     'tipe_absensi' => 'masuk',
+        //     'tipe_absensi' => 'hadir',
         //     'photo_masuk' => 'absensi/9746821a-1dc0-4ee9-8a36-8249933a1d27.jpg',
         //     'photo_pulang' => null,
         //     'waktu_absen_masuk' => '2026-05-30 09:57:45',

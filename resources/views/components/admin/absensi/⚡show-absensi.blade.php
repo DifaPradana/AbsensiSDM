@@ -1,7 +1,11 @@
 <?php
 
 use App\Models\Absensi;
+use App\Jobs\ExportAbsensiJob;
+use App\Models\ExportFile;
 use Livewire\Component;
+use Illuminate\Support\Facades\Auth;
+use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
 
 new class extends Component
 {
@@ -9,10 +13,11 @@ new class extends Component
     public $tanggalAwal;
     public $tanggalAkhir;
     public $perPage = 20;
+    public bool $isExporting = false;
+    public bool $exportDone = false;
 
     public function updatedTanggalAwal($value)
     {
-        // Reset tanggalAkhir jika lebih kecil dari tanggalAwal
         if ($this->tanggalAkhir && $this->tanggalAkhir < $value) {
             $this->tanggalAkhir = null;
         }
@@ -23,6 +28,39 @@ new class extends Component
         $this->tanggalAwal = null;
         $this->tanggalAkhir = null;
         $this->search = '';
+    }
+
+    public function exportCsv(): void
+    {
+        $this->isExporting = true;
+        $this->exportDone = false;
+
+        cache()->forget('export_done'); // ✅
+
+        ExportAbsensiJob::dispatch(
+            $this->search,
+            $this->tanggalAwal,
+            $this->tanggalAkhir,
+        );
+    }
+
+    public function checkExport(): void
+    {
+        if (! $this->isExporting) return;
+
+        if (cache()->get('export_done')) { // ✅
+            $this->isExporting = false;
+            $this->exportDone = true;
+            cache()->forget('export_done'); // ✅
+
+            LivewireAlert::title('Berhasil Export Absensi')
+                ->success()
+                ->timer(10000)
+                ->toast()
+                ->position('top-end')
+                ->timerProgressBar()
+                ->show();
+        }
     }
 
     public function render()
@@ -42,6 +80,12 @@ new class extends Component
 ?>
 
 <div class="container-fluid">
+
+    {{-- Polling hanya aktif saat export berjalan --}}
+    @if($isExporting)
+    <div wire:poll.3s="checkExport"></div>
+    @endif
+
     <div class="card">
         <div class="card-body">
             <h5 class="card-title fw-semibold mb-4">Filter Tanggal</h5>
@@ -49,22 +93,32 @@ new class extends Component
             <div class="row align-items-end g-3">
                 <div class="col-md-4">
                     <label for="tanggalAwal" class="form-label fw-semibold">Tanggal Awal</label>
-                    <input type="date" id="tanggalAwal" wire:model.live="tanggalAwal" class="form-control" wire:model.live="tanggalAwal">
-
+                    <input type="date" id="tanggalAwal" wire:model.live="tanggalAwal" class="form-control">
                 </div>
 
                 <div class="col-md-4">
                     <label for="tanggalAkhir" class="form-label fw-semibold">Tanggal Akhir</label>
-                    <input type="date" id="tanggalAkhir" wire:model.live="tanggalAkhir" class="form-control" wire:model.live="tanggalAkhir"
-                        min="{{ $tanggalAwal }}" {{-- mencegah pilih tanggal sebelum tanggalAwal --}}
-                        class="form-control"
+                    <input type="date" id="tanggalAkhir" wire:model.live="tanggalAkhir" class="form-control"
+                        min="{{ $tanggalAwal }}"
                         @if(!$tanggalAwal) disabled @endif>
                 </div>
 
-                <div class="col-md-2">
+                {{-- Tombol Reset + Export --}}
+                <div class="col-md-4 d-flex gap-2">
                     <button type="button" wire:click="resetFilter" class="btn btn-outline-secondary w-100">
                         Reset
                     </button>
+
+                    @if(!$isExporting)
+                    <button type="button" wire:click="exportCsv" class="btn btn-success w-100 d-flex align-items-center justify-content-center gap-1">
+                        <i class="ti ti-file-spreadsheet"></i> Export CSV
+                    </button>
+                    @else
+                    <button type="button" class="btn btn-success w-100 d-flex align-items-center justify-content-center gap-1" disabled>
+                        <span class="spinner-border spinner-border-sm" role="status"></span>
+                        Memproses...
+                    </button>
+                    @endif
                 </div>
             </div>
         </div>
@@ -86,13 +140,12 @@ new class extends Component
                         </div>
                     </div>
 
-
                     {{-- Table --}}
                     <div class="overflow-x-auto">
                         <table class="w-full border border-gray-300 text-sm text-left">
                             <thead class="text-xs text-gray-700 uppercase bg-gray-100">
                                 <tr>
-                                    <th class="border px-4 py-3 text-center">No</th>
+                                    <th class="border px-4 py-3 text-center">Tanggal</th>
                                     <th class="border px-4 py-3 text-center">Nama</th>
                                     <th class="border px-4 py-3 text-center">Role</th>
                                     <th class="border px-4 py-3 text-center">Status</th>
@@ -110,7 +163,7 @@ new class extends Component
                                 @forelse ($absensis as $index => $absensi)
                                 <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50">
                                     <td class="border px-4 py-3 text-center text-gray-500">
-                                        {{ $absensis->firstItem() + $index }}
+                                        {{ $absensi->waktu_absen_masuk ? $absensi->waktu_absen_masuk->translatedFormat('l, d F') : '-' }}
                                     </td>
                                     <td class="border px-4 py-3 text-center font-medium text-gray-900">
                                         {{ $absensi->user->nama_karyawan ?? '-' }}
@@ -133,7 +186,6 @@ new class extends Component
                                             {{ ucfirst($status) }}
                                         </span>
                                     </td>
-
                                     <td class="border px-4 py-3 text-center">
                                         @php
                                         $badgeClass = match(true) {
@@ -148,10 +200,8 @@ new class extends Component
                                     <td class="border px-4 py-3 text-center">
                                         @if($absensi->lokasi_masuk === 'Unknown')
                                         @if($absensi->latitude_masuk && $absensi->longitude_masuk)
-                                        <a
-                                            href="https://www.google.com/maps?q={{ $absensi->latitude_masuk }},{{ $absensi->longitude_masuk }}"
-                                            target="_blank"
-                                            class="text-blue-600 hover:underline">
+                                        <a href="https://www.google.com/maps?q={{ $absensi->latitude_masuk }},{{ $absensi->longitude_masuk }}"
+                                            target="_blank" class="text-blue-600 hover:underline">
                                             {{ $absensi->latitude_masuk }}, {{ $absensi->longitude_masuk }}
                                         </a>
                                         @else
@@ -167,27 +217,22 @@ new class extends Component
                                     <td class="border px-4 py-3 text-center">
                                         @php
                                         $status = $absensi['status_absensi_pulang'] ?? '';
-
-                                        $badgeClass = match (true) {
+                                        $badgeClass = match(true) {
                                         str_starts_with($status, 'Terlambat') => 'bg-danger',
                                         str_starts_with($status, 'Pulang Lebih Cepat') => 'bg-warning',
                                         empty($status) => '',
                                         default => 'bg-success',
                                         };
                                         @endphp
-
                                         <span class="badge {{ $badgeClass }} rounded-3 fw-semibold">
                                             {{ $status }}
                                         </span>
                                     </td>
-
                                     <td class="border px-4 py-3 text-center">
                                         @if($absensi->lokasi_pulang === 'Unknown')
                                         @if($absensi->latitude_pulang && $absensi->longitude_pulang)
-                                        <a
-                                            href="https://www.google.com/maps?q={{ $absensi->latitude_pulang }},{{ $absensi->longitude_pulang }}"
-                                            target="_blank"
-                                            class="text-blue-600 hover:underline">
+                                        <a href="https://www.google.com/maps?q={{ $absensi->latitude_pulang }},{{ $absensi->longitude_pulang }}"
+                                            target="_blank" class="text-blue-600 hover:underline">
                                             {{ $absensi->latitude_pulang }}, {{ $absensi->longitude_pulang }}
                                         </a>
                                         @else
@@ -212,8 +257,6 @@ new class extends Component
                                         <span class="text-gray-400 text-xs">-</span>
                                         @endif
                                     </td>
-
-                                    {{-- Tombol Foto Pulang --}}
                                     <td class="px-4 py-3 text-center">
                                         @if($absensi->photo_pulang)
                                         <button type="button"
@@ -227,6 +270,7 @@ new class extends Component
                                         @endif
                                     </td>
                                 </tr>
+
                                 {{-- Modal Foto Masuk --}}
                                 <div class="modal fade" id="modalMasuk{{ $absensi->absensi_id }}" tabindex="-1" aria-hidden="true" wire:ignore.self>
                                     <div class="modal-dialog modal-dialog-centered">
@@ -276,6 +320,7 @@ new class extends Component
                                         </div>
                                     </div>
                                 </div>
+
                                 @empty
                                 <tr>
                                     <td colspan="12" class="border px-4 py-6 text-center text-gray-400 italic">
@@ -286,8 +331,6 @@ new class extends Component
                             </tbody>
                         </table>
                     </div>
-
-
 
                     {{-- Per Page & Pagination --}}
                     <div class="py-4 px-3">
@@ -321,7 +364,7 @@ new class extends Component
         </div>
         <br>
     </div>
-    {{-- Taruh di bagian paling bawah, sebelum penutup </div> utama --}}
+
     <script>
         function showModal(id) {
             const el = document.getElementById(id);

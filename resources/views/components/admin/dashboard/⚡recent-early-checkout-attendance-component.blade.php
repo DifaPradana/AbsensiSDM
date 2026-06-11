@@ -8,7 +8,7 @@ new class extends Component
     public function getRecentAttendance()
     {
         $absensis = Absensi::with('user')
-            ->whereDate('created_at', today()) // ← filter hari ini
+            ->whereDate('waktu_absen_masuk', today()) // ← filter hari ini
             ->latest()
             ->get(); // ← hapus take(20) agar semua data hari ini masuk
 

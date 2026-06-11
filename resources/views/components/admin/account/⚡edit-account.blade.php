@@ -159,8 +159,6 @@ new class extends Component
             </div>
         </div>
     </div>
-
-    <button type="button" wire:click="save">Test Toast</button>
 </div>
 
 <script>

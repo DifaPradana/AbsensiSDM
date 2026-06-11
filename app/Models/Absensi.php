@@ -33,6 +33,11 @@ class Absensi extends Model
         return $this->belongsTo(User::class, 'user_id', 'user_id');
     }
 
+    protected $casts = [
+        'waktu_absen_masuk' => 'datetime',
+        'waktu_absen_pulang' => 'datetime'
+    ];
+
     public function scopeFilterTanggal($query, $tanggalAwal, $tanggalAkhir)
     {
         return $query->when($tanggalAwal && $tanggalAkhir, function ($q) use ($tanggalAwal, $tanggalAkhir) {

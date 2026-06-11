@@ -39,6 +39,18 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
+                    <a class="sidebar-link" href="{{route('role.page')}}" wire:navigate aria-expanded="false">
+                        <span>
+                            <i class="ti ti-user-plus"></i>
+                        </span>
+                        <span class="hide-menu">Tambah Role</span>
+                    </a>
+                </li>
+                <li class="nav-small-cap">
+                    <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+                    <span class="hide-menu">Absensi</span>
+                </li>
+                <li class="sidebar-item">
                     <a class="sidebar-link" href="{{route('absensi.page')}}" wire:navigate aria-expanded="false">
                         <span>
                             <i class="ti ti-file-description"></i>
@@ -46,6 +58,27 @@
                         <span class="hide-menu">Absensi</span>
                     </a>
                 </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="{{route('absensi.page')}}" wire:navigate aria-expanded="false">
+                        <span>
+                            <i class="ti ti-id"></i>
+                        </span>
+                        <span class="hide-menu">Pengajuan Izin</span>
+                    </a>
+                </li>
+                <li class="nav-small-cap">
+                    <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+                    <span class="hide-menu">Dokumen</span>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="{{ route('exported-absensi.page') }}" wire:navigate aria-expanded="false">
+                        <span>
+                            <i class="ti ti-file"></i>
+                        </span>
+                        <span class="hide-menu">Export Absensi</span>
+                    </a>
+                </li>
+
                 @elseif (auth()->user()->role_id == '2' && '3')
 
                 <li class="nav-small-cap">
@@ -61,19 +94,31 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="{{route('karyawan.izin-absen.page')}}" wire:navigate aria-expanded="false">
-                        <span>
-                            <i class="ti ti-checkup-list"></i>
-                        </span>
-                        <span class="hide-menu">Izin Absen</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
                     <a class="sidebar-link" href="{{route('karyawan.kehadiran.page')}}" wire:navigate aria-expanded="false">
                         <span>
                             <i class="ti ti-history"></i>
                         </span>
                         <span class="hide-menu">Riwayat Kehadiran</span>
+                    </a>
+                </li>
+                <li class="nav-small-cap">
+                    <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+                    <span class="hide-menu">Izin</span>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="{{route('karyawan.izin-absen.page')}}" wire:navigate aria-expanded="false">
+                        <span>
+                            <i class="ti ti-checkup-list"></i>
+                        </span>
+                        <span class="hide-menu">Pengajuan Izin Absen</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="{{route('karyawan.history-izin')}}" wire:navigate aria-expanded="false">
+                        <span>
+                            <i class="ti ti-history"></i>
+                        </span>
+                        <span class="hide-menu">Riwayat Pengajuan Izin</span>
                     </a>
                 </li>
 

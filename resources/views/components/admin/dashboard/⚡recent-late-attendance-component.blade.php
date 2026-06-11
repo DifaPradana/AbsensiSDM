@@ -9,7 +9,7 @@ new class extends Component
     {
         $absensis = Absensi::with('user')
             ->whereHas('user')
-            ->whereDate('created_at', today())
+            ->whereDate('waktu_absen_masuk', today())
             ->latest()
             ->get();
 

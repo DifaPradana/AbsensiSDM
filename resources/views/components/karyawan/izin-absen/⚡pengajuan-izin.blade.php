@@ -1,23 +1,136 @@
 <?php
 
+use App\Models\IzinAbsen;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
 use Livewire\Component;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
+use Illuminate\Support\Str;
+use Livewire\WithFileUploads;
 
 new class extends Component
 {
+
+    use WithFileUploads;
+
     public $dropdownItem = [];
     public $tipe_izin;
     public $tanggalAwal;
     public $tanggalAkhir;
+    public $note;
+    public $photo;
 
     public function mount()
     {
         $this->dropdownItem = ['izin', 'sakit'];
     }
+
+    public function izin()
+    {
+        $user = Auth::user();
+
+        $validate = Validator::make([
+            'tipe_izin'  => $this->tipe_izin,
+            'tanggalAwal' => $this->tanggalAwal,
+            'tanggalAkhir' => $this->tanggalAkhir,
+            'note'      => $this->note,
+            'photo'     => $this->photo,
+        ], [
+            'tipe_izin' => 'required|in:izin,sakit,cuti',
+            'tanggalAwal' => 'required|date',
+            'tanggalAkhir' => 'nullable|date|after_or_equal:tanggalAwal',
+            'note' => 'nullable|string|max:500',
+            'photo' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+        ], [
+            'tipe_izin.required'  => 'Tipe izin harus diisi',
+            'tanggalAwal.required' => 'Tanggal Awal harus diisi',
+            'photo.required'     => 'Dokumen harus diambil',
+            'photo.image'        => 'File harus berupa gambar',
+            'photo.mimes'        => 'Photo harus berupa gambar atau pdf',
+            'photo.max'          => 'Ukuran photo maksimal 10 MB',
+            'note.max'           => 'Catatan maksimal 100 karakter',
+        ]);
+
+        if ($validate->fails()) {
+            $this->dispatch('absen-error', message: $validate->errors()->first());
+            LivewireAlert::title($validate->errors()->first())
+                ->error()
+                ->timer(null)
+                ->toast()
+                ->withConfirmButton('Ok')
+                ->withOptions(['allowOutsideClick' => false])
+                ->show();
+            return;
+        }
+
+
+        if ($this->photo) {
+
+            $uploadedFile = $this->photo;
+
+            $filename = Str::uuid() . '.' . $uploadedFile->extension();
+            $relativePath = 'dokumen-izin/' . $filename;
+            $fullPath = storage_path('app/public/' . $relativePath);
+
+            if (!is_dir(dirname($fullPath))) {
+                mkdir(dirname($fullPath), 0755, true);
+            }
+
+            $mimeType = $uploadedFile->getMimeType();
+
+            if (str_starts_with($mimeType, 'image/')) {
+
+                $manager = ImageManager::usingDriver(Driver::class);
+
+                $image = $manager->decodeSplFileInfo($uploadedFile);
+
+                // resize hanya jika lebih besar dari 1200px
+                if ($image->width() > 1200) {
+                    $image->scale(width: 1200);
+                }
+
+                $image->save($fullPath, quality: 70);
+            } else {
+
+                // PDF atau file lain langsung simpan
+                copy(
+                    $uploadedFile->getRealPath(),
+                    $fullPath
+                );
+            }
+
+            $dokumenPath = $relativePath;
+        }
+
+        IzinAbsen::create([
+            'user_id' => $user->user_id,
+            'tipe_izin' => $this->tipe_izin,
+            'mulai_izin' => $this->tanggalAwal,
+            'akhir_izin' => $this->tanggalAkhir,
+            'dokumen_izin' => $dokumenPath,
+            'note' => $this->note,
+        ]);
+
+        $this->reset([
+            'tipe_izin',
+            'tanggalAwal',
+            'tanggalAkhir',
+            'photo',
+            'note',
+        ]);
+
+        session()->flash(
+            'success',
+            'Pengajuan izin berhasil dikirim.'
+        );
+    }
 };
 ?>
 
 <div>
-    <form wire:submit.prevent="absen">
+    <form wire:submit.prevent="izin">
         <div class="card">
             <div class="card-body">
                 <div class="mb-3">

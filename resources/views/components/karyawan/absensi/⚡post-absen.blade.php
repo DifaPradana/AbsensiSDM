@@ -30,6 +30,7 @@ new class extends Component
         // dd($this->all());
 
         $absensiAktif = Absensi::where('user_id', $user->user_id)
+            ->whereDate('waktu_absen_masuk', today())
             ->whereNull('waktu_absen_pulang')
             ->latest('waktu_absen_masuk')
             ->first();
@@ -74,7 +75,7 @@ new class extends Component
                 ->error()
                 ->timer(null)
                 ->toast()
-                ->withConfirmButton('Got it')
+                ->withConfirmButton('Ok')
                 ->withOptions(['allowOutsideClick' => false])
                 ->show();
             return;

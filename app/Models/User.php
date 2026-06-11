@@ -83,4 +83,9 @@ class User extends Authenticatable
             ? asset('storage/' . $this->photo_profile)
             : asset('assets/images/profile/user-1.jpg');
     }
+
+    public function izins()
+    {
+        return $this->hasMany(IzinAbsen::class, 'user_id', 'user_id');
+    }
 }
