@@ -12,14 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('izin_absens', function (Blueprint $table) {
-            $table->id('id_izin');
+            $table->id('izin_id');
             $table->foreignId('user_id')->constrained('users', 'user_id');
             $table->enum('tipe_izin', ['sakit', 'izin', 'cuti'])->default('izin');
             $table->date('mulai_izin');
             $table->string('dokumen_izin')->nullable();
             $table->date('akhir_izin')->nullable();
             $table->text('note')->nullable();
-            $table->enum('status', ['menunggu konfirmasi', 'terkonfirmasi', 'batal'])->default('menunggu konfirmasi');
+            $table->enum('status', ['menunggu konfirmasi', 'disetujui', 'ditolak'])->default('menunggu konfirmasi');
             $table->timestamps();
         });
     }

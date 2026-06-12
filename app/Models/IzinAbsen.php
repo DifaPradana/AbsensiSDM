@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class IzinAbsen extends Model
 {
-    protected $primaryKey = 'id_izin';
+    protected $primaryKey = 'izin_id';
 
     protected $fillable = [
         'user_id',
@@ -14,7 +14,8 @@ class IzinAbsen extends Model
         'mulai_izin',
         'akhir_izin',
         'dokumen_izin',
-        'note'
+        'note',
+        'status'
     ];
 
     public function user()

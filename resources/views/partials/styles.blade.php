@@ -488,4 +488,13 @@
             grid-template-columns: repeat(2, 1fr);
         }
     }
+
+    .stat-card {
+        transition: opacity 0.15s, transform 0.15s;
+    }
+
+    .stat-card:hover {
+        opacity: 0.85;
+        transform: translateY(-1px);
+    }
 </style>

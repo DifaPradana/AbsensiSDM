@@ -1,8 +1,10 @@
 <?php
 
 use App\Models\IzinAbsen;
+use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Illuminate\Support\Facades\Storage;
 
 new class extends Component
 {
@@ -15,10 +17,25 @@ new class extends Component
         $this->resetPage();
     }
 
+    public function delete($izin)
+    {
+        $izin = IzinAbsen::where('izin_id', $izin)->firstOrFail();
+        // dd($izin->dokumen_izin);
+        Storage::disk('public')->delete($izin->dokumen_izin);
+        $izin->delete();
+        LivewireAlert::title('Berhasil')
+            ->text('Kamu berhasil delete izin')
+            ->success()
+            ->toast()
+            ->position('top-end')
+            ->timer(3000)
+            ->show();
+    }
+
     public function with(): array
     {
         return [
-            'absensis' => IzinAbsen::query()
+            'izins' => IzinAbsen::query()
                 ->with('user')
                 ->latest('created_at')
                 ->paginate($this->perPage),
@@ -34,48 +51,48 @@ new class extends Component
             <div class="abs-grid">
                 {{-- Summary Badge --}}
                 @php
-                $izin = $absensis->getCollection()->where('tipe_izin', 'izin')->count();
-                $sakit = $absensis->getCollection()->where('tipe_izin', 'sakit')->count();
-                $cuti = $absensis->getCollection()->where('tipe_izin', 'cuti')->count();
+                $totalWaiting = $izins->getCollection()->where('status', 'menunggu konfirmasi')->count();
+                $totalAcc = $izins->getCollection()->where('status', 'disetujui')->count();
+                $totalCancel = $izins->getCollection()->where('status', 'ditolak')->count();
                 @endphp
 
                 <div class="row g-2 mb-3">
                     <div class="col-md-4">
                         <div class="alert alert-warning text-center mb-0">
-                            <div class="fw-semibold fs-5">{{ $izin }}</div>
-                            <div class="small">Izin</div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-4">
-                        <div class="alert alert-info text-center mb-0">
-                            <div class="fw-semibold fs-5">{{ $sakit }}</div>
-                            <div class="small">Sakit</div>
+                            <div class="fw-semibold fs-5">{{ $totalWaiting }}</div>
+                            <div class="small">Menunggu Konfirmasi</div>
                         </div>
                     </div>
 
                     <div class="col-md-4">
                         <div class="alert alert-success text-center mb-0">
-                            <div class="fw-semibold fs-5">{{ $cuti }}</div>
-                            <div class="small">Cuti</div>
+                            <div class="fw-semibold fs-5">{{ $totalAcc }}</div>
+                            <div class="small">Disetujui</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="alert alert-danger text-center mb-0">
+                            <div class="fw-semibold fs-5">{{ $totalCancel }}</div>
+                            <div class="small">Ditolak</div>
                         </div>
                     </div>
                 </div>
 
                 <div class="abs-grid">
-                    @forelse ($absensis as $absensi)
+                    @forelse ($izins as $izin)
 
                     @php
-                    $badgeClass = match($absensi->status) {
+                    $badgeClass = match($izin->status) {
                     'menunggu konfirmasi' => 'bg-warning',
                     'batal' => 'bg-danger',
-                    'terkonfirmasi' => 'bg-success',
+                    'disetujui' => 'bg-success',
                     default => 'bg-secondary'
                     };
 
-                    $durasi = $absensi->akhir_izin
-                    ? \Carbon\Carbon::parse($absensi->mulai_izin)
-                    ->diffInDays($absensi->akhir_izin) + 1
+                    $durasi = $izin->akhir_izin
+                    ? \Carbon\Carbon::parse($izin->mulai_izin)
+                    ->diffInDays($izin->akhir_izin) + 1
                     : 1;
                     @endphp
 
@@ -84,11 +101,11 @@ new class extends Component
 
                             <div>
                                 <i class="ti ti-calendar"></i>
-                                {{ $absensi->created_at->translatedFormat('d F Y') }}
+                                {{ $izin->created_at->translatedFormat('d F Y') }}
                             </div>
 
                             <span class="badge {{ $badgeClass }}">
-                                {{ ucfirst($absensi->status) }}
+                                {{ ucfirst($izin->status) }}
                             </span>
 
                         </div>
@@ -100,14 +117,14 @@ new class extends Component
                                 <div class="col-md-6 mb-3">
                                     <small class="text-muted">Tipe Izin</small>
                                     <div class="fw-semibold">
-                                        {{ ucwords($absensi->tipe_izin ?? '-') }}
+                                        {{ ucwords($izin->tipe_izin ?? '-') }}
                                     </div>
                                 </div>
 
                                 <div class="col-md-6 mb-3">
                                     <small class="text-muted">Karyawan</small>
                                     <div class="fw-semibold">
-                                        {{ ucwords($absensi->user->nama_karyawan ?? '-') }}
+                                        {{ ucwords($izin->user->nama_karyawan ?? '-') }}
                                     </div>
                                 </div>
 
@@ -121,46 +138,53 @@ new class extends Component
                                 <div class="col-md-6 mb-3">
                                     <small class="text-muted">Mulai Izin</small>
                                     <div>
-                                        {{ \Carbon\Carbon::parse($absensi->mulai_izin)->translatedFormat('d F Y') }}
+                                        {{ \Carbon\Carbon::parse($izin->mulai_izin)->translatedFormat('d F Y') }}
                                     </div>
                                 </div>
 
                                 <div class="col-md-6 mb-3">
                                     <small class="text-muted">Akhir Izin</small>
                                     <div>
-                                        {{ $absensi->akhir_izin
-                                ? \Carbon\Carbon::parse($absensi->akhir_izin)->translatedFormat('d F Y')
+                                        {{ $izin->akhir_izin
+                                ? \Carbon\Carbon::parse($izin->akhir_izin)->translatedFormat('d F Y')
                                 : '-' }}
                                     </div>
                                 </div>
 
                             </div>
+                            <div class="mt-2 d-flex justify-content-between align-items-center">
+                                @if($izin->dokumen_izin)
+                                <div>
 
-                            @if($absensi->dokumen_izin)
-                            <div class="mt-2">
+                                    <button
+                                        type="button"
+                                        class="btn btn-primary btn-sm"
+                                        onclick="showModal('modalDokumen{{ $izin->izin_id }}')">
 
-                                <button
-                                    type="button"
-                                    class="btn btn-primary btn-sm"
-                                    onclick="showModal('modalDokumen{{ $absensi->id_izin }}')">
+                                        <i class=" ti ti-eye"></i>
+                                        Lihat Dokumen
 
-                                    <i class="ti ti-eye"></i>
-                                    Lihat Dokumen
-
-                                </button>
-
+                                    </button>
+                                </div>
+                                @endif
+                                <div>
+                                    <button
+                                        onclick="confirm('Kamu akan menghapus izin secara permanen, apakah yakin?') || event.stopImmediatePropagation()"
+                                        wire:click="delete({{ $izin->izin_id }})"
+                                        class="btn btn-danger btn-sm">
+                                        <i class="ti ti-trash" aria-hidden="true"></i>
+                                    </button>
+                                </div>
                             </div>
-                            @endif
-
                         </div>
                     </div>
 
                     {{-- Modal Dokumen --}}
-                    @if($absensi->dokumen_izin)
+                    @if($izin->dokumen_izin)
 
                     <div
                         class="modal fade"
-                        id="modalDokumen{{ $absensi->id_izin }}"
+                        id="modalDokumen{{ $izin->izin_id }}"
                         tabindex="-1"
                         aria-hidden="true"
                         wire:ignore.self>
@@ -170,35 +194,35 @@ new class extends Component
 
                                 <div class="modal-header">
                                     <h5 class="modal-title">
-                                        Dokumen {{ ucfirst($absensi->tipe_izin) }}
+                                        Dokumen {{ ucfirst($izin->tipe_izin) }}
                                     </h5>
 
                                     <button
                                         type="button"
                                         class="btn-close"
-                                        onclick="hideModal('modalDokumen{{ $absensi->id_izin }}')">
+                                        onclick="hideModal('modalDokumen{{ $izin->izin_id }}')">
                                     </button>
                                 </div>
 
                                 <div class="modal-body text-center">
 
                                     @php
-                                    $ext = strtolower(pathinfo($absensi->dokumen_izin, PATHINFO_EXTENSION));
+                                    $ext = strtolower(pathinfo($izin->dokumen_izin, PATHINFO_EXTENSION));
                                     @endphp
 
                                     @if(in_array($ext, ['jpg','jpeg','png','webp']))
                                     <img
-                                        src="{{ asset('storage/'.$absensi->dokumen_izin) }}"
+                                        src="{{ asset('storage/'.$izin->dokumen_izin) }}"
                                         class="img-fluid rounded">
                                     @elseif($ext === 'pdf')
                                     <iframe
-                                        src="{{ asset('storage/'.$absensi->dokumen_izin) }}"
+                                        src="{{ asset('storage/'.$izin->dokumen_izin) }}"
                                         width="100%"
                                         height="600">
                                     </iframe>
                                     @else
                                     <a
-                                        href="{{ asset('storage/'.$absensi->dokumen_izin) }}"
+                                        href="{{ asset('storage/'.$izin->dokumen_izin) }}"
                                         target="_blank"
                                         class="btn btn-primary">
 
@@ -213,7 +237,7 @@ new class extends Component
                                     <button
                                         type="button"
                                         class="btn btn-secondary"
-                                        onclick="hideModal('modalDokumen{{ $absensi->id_izin }}')">
+                                        onclick="hideModal('modalDokumen{{ $izin->izin_id }}')">
 
                                         Tutup
 
@@ -249,12 +273,12 @@ new class extends Component
                     </select>
                 </div>
                 <div class="text-muted" style="font-size:13px;">
-                    Menampilkan {{ $absensis->firstItem() ?? 0 }}–{{ $absensis->lastItem() ?? 0 }}
-                    dari {{ $absensis->total() }} data
+                    Menampilkan {{ $izins->firstItem() ?? 0 }}–{{ $izins->lastItem() ?? 0 }}
+                    dari {{ $izins->total() }} data
                 </div>
             </div>
             <div class="mt-3">
-                {{ $absensis->links() }}
+                {{ $izins->links() }}
             </div>
 
         </div>{{-- end card-body --}}

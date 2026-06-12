@@ -14,6 +14,7 @@ Route::group(['middleware' => ['auth', 'role:admin'], 'prefix' => 'admin'], func
     Route::livewire('/account', 'admin.account.index')->name('account.page');
     Route::livewire('/role', 'admin.role.index')->name('role.page');
     Route::livewire('/absensi', 'admin.absensi.index')->name('absensi.page');
+    Route::livewire('/pengajuan-izin', 'admin.izin.index')->name('izin.page');
     Route::livewire('/exported-absensi', 'admin.export-absensi.index')->name('exported-absensi.page');
 });
 

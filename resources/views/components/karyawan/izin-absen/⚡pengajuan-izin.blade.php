@@ -108,7 +108,7 @@ new class extends Component
             'user_id' => $user->user_id,
             'tipe_izin' => $this->tipe_izin,
             'mulai_izin' => $this->tanggalAwal,
-            'akhir_izin' => $this->tanggalAkhir,
+            'akhir_izin' => $this->tanggalAkhir ?: $this->tanggalAwal,
             'dokumen_izin' => $dokumenPath,
             'note' => $this->note,
         ]);
@@ -121,10 +121,13 @@ new class extends Component
             'note',
         ]);
 
-        session()->flash(
-            'success',
-            'Pengajuan izin berhasil dikirim.'
-        );
+        LivewireAlert::title('Pengajuan Izin Berhasil')
+            ->text('Pengajuanmu akan di cek, sabar ya')
+            ->success()
+            ->timer(null)
+            ->withOptions(['allowOutsideClick' => false])
+            ->withConfirmButton('OK')
+            ->show();
     }
 };
 ?>

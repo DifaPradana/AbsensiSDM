@@ -77,7 +77,7 @@ new class extends Component
             $this->reset();
             $this->dispatch('success');
             LivewireAlert::title('Berhasil Edit')
-                ->text('Berhasil edit role role')
+                ->text('Berhasil edit role')
                 ->success()
                 ->timer(3000)
                 ->toast()

@@ -166,10 +166,10 @@ new class extends Component
                                         {{ $absensi->waktu_absen_masuk ? $absensi->waktu_absen_masuk->translatedFormat('l, d F') : '-' }}
                                     </td>
                                     <td class="border px-4 py-3 text-center font-medium text-gray-900">
-                                        {{ $absensi->user->nama_karyawan ?? '-' }}
+                                        {{ ucwords($absensi->user->nama_karyawan ?? '-') }}
                                     </td>
                                     <td class="border px-4 py-3 text-center">
-                                        {{ $absensi->user->role->nama_role ?? '-' }}
+                                        {{ ucwords($absensi->user->role->nama_role ?? '-') }}
                                     </td>
                                     <td class="border px-4 py-3 text-center">
                                         @php

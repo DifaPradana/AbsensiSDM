@@ -181,20 +181,21 @@ new class extends Component
         <br>
     </div>
     <script>
-        document.addEventListener('livewire:init', () => {
+        function registerListeners() {
             Livewire.on('show-edit-modal', () => {
                 const modalEl = document.getElementById('editAkunModal');
-
-                let modal = bootstrap.Modal.getInstance(modalEl);
-
-                if (!modal) {
-                    modal = new bootstrap.Modal(modalEl);
-                }
-
-                if (!modalEl.classList.contains('show')) {
-                    modal.show();
-                }
+                if (!modalEl) return;
+                let modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                if (!modalEl.classList.contains('show')) modal.show();
             });
-        });
+
+            Livewire.on('hide-edit-modal', () => {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editAkunModal'));
+                modal?.hide();
+            });
+        }
+
+        document.addEventListener('livewire:init', registerListeners);
+        document.addEventListener('livewire:navigated', registerListeners);
     </script>
 </div>

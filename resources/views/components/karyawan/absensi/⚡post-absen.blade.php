@@ -21,6 +21,7 @@ new class extends Component
     public $longitude;
     public $photo;
     public $note = '';
+    public bool $gpsReady = false;
 
     public function absen()
     {
@@ -250,7 +251,8 @@ new class extends Component
                     class="btn btn-primary"
                     style="width:100%;justify-content:center;"
                     wire:loading.attr="disabled"
-                    wire:target="photo, absen">
+                    wire:target="photo, absen"
+                    @disabled(!$gpsReady)>
                     <i class="ti ti-send" style="font-size:15px;"></i>
                     <span>Kirim Presensi</span>
                 </button>
@@ -263,6 +265,7 @@ new class extends Component
         document.querySelector('form').addEventListener('submit', function() {
             $wire.set('latitude', document.getElementById('latitude').value);
             $wire.set('longitude', document.getElementById('longitude').value);
+            component.$wire.set('gpsReady', true);
         });
 
         document.addEventListener('livewire:init', () => {
@@ -326,7 +329,15 @@ new class extends Component
 
                     },
                     err => {
-                        alert('GPS ERROR: ' + err.message);
+                        gpsStatusText.textContent = 'Akses lokasi gagal';
+
+                        gpsBadge.innerHTML =
+                            '<i class="ti ti-x" style="font-size:12px;"></i> GPS Ditolak';
+
+                        gpsBadge.className = 'badge badge-danger';
+
+                        gpsCoordsEl.textContent = err.message;
+                        $wire.set('gpsReady', false);
                     }
                 );
             }

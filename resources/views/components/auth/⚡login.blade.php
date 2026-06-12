@@ -61,7 +61,7 @@ new class extends Component {
                 break;
         }
 
-        return $this->redirectRoute($route, navigate: true);
+        return $this->redirectRoute($route);
     }
 };
 ?>
