@@ -47,11 +47,9 @@ class ExportAbsensiJob implements ShouldQueue
             'Waktu Masuk',
             'Status Masuk',
             'Lokasi Masuk',
-            'Note Masuk',
             'Waktu Pulang',
             'Status Pulang',
             'Lokasi Pulang',
-            'Note Pulang',
         ]);
 
         $totalRows = 0;
@@ -59,18 +57,16 @@ class ExportAbsensiJob implements ShouldQueue
         $query->chunk(200, function ($rows) use ($file, &$totalRows) {
             foreach ($rows as $absensi) {
                 fputcsv($file, [
-                    $absensi->waktu_absen_masuk?->translatedFormat('l, d F') ?? '-',
+                    $absensi->waktu_absen_masuk?->locale('id')->isoFormat('dddd D MMMM YYYY') ?? '-',
                     $absensi->user->nama_karyawan ?? '-',
                     $absensi->user->role->nama_role ?? '-',
                     ucfirst($absensi->tipe_absensi ?? '-'),
                     $absensi->waktu_absen_masuk?->format('H:i') ?? '-',
                     $absensi->status_absensi_masuk ?? '-',
                     $absensi->lokasi_masuk ?? '-',
-                    // $absensi->note_masuk ?? '-',
                     $absensi->waktu_absen_pulang?->format('H:i') ?? '-',
                     $absensi->status_absensi_pulang ?? '-',
                     $absensi->lokasi_pulang ?? '-',
-                    // $absensi->note_pulang ?? '-',
                 ]);
                 $totalRows++;
             }

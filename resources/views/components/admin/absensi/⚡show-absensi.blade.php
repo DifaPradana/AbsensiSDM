@@ -76,6 +76,23 @@ new class extends Component
             ->layout('layouts.main')
             ->title('Absensi | Account');
     }
+
+
+    public function batalkanLembur($absensi_id)
+    {
+        $absensi = Absensi::findOrFail($absensi_id);
+
+        $absensi->update([
+            'status_absensi_pulang' => 'On Time'
+        ]);
+
+        LivewireAlert::title('Status lembur dibatalkan')
+            ->success()
+            ->timer(2000)
+            ->toast()
+            ->position('top-end')
+            ->show();
+    }
 };
 ?>
 
@@ -157,6 +174,7 @@ new class extends Component
                                     <th class="border px-4 py-3 text-center">Note Pulang</th>
                                     <th class="border px-4 py-3 text-center">Foto Masuk</th>
                                     <th class="border px-4 py-3 text-center">Foto Pulang</th>
+                                    <th class="border px-4 py-3 text-center">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -269,6 +287,24 @@ new class extends Component
                                         <span class="text-gray-400 text-xs">-</span>
                                         @endif
                                     </td>
+                                    <td class="px-4 py-3 text-center">
+                                        @if($absensi->status_absensi_pulang && str_contains($absensi->status_absensi_pulang, 'Lembur'))
+                                        <button
+                                            type="button"
+                                            wire:click="batalkanLembur({{ $absensi->absensi_id }})"
+                                            wire:confirm="Apakah kamu yakin ingin membatalkan lembur {{ ucwords($absensi->user->nama_karyawan) }}? Status pulang akan diubah menjadi On Time."
+                                            wire:loading.attr="disabled"
+                                            wire:target="batalkanLembur"
+                                            class="btn btn-warning btn-sm d-inline-flex align-items-center gap-1">
+                                            <wire:loading.remove wire:target="batalkanLembur">
+                                                <i class="ti ti-clock-off"></i>
+                                            </wire:loading.remove>
+                                            Batalkan Lembur
+                                        </button>
+                                        @else
+                                        <span class="text-gray-400 text-xs">-</span>
+                                        @endif
+                                    </td>
                                 </tr>
 
                                 {{-- Modal Foto Masuk --}}
@@ -306,7 +342,7 @@ new class extends Component
                                             </div>
                                             <div class="modal-body text-center">
                                                 @if ($absensi->photo_pulang)
-                                                <img src="{{ Storage::url($absensi->photo_masuk) }}">
+                                                <img src="{{ Storage::url($absensi->photo_pulang) }}">
                                                 @else
                                                 <span class="text-muted">Foto tidak tersedia</span>
                                                 @endif

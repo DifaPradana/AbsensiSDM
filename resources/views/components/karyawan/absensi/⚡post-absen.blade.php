@@ -150,7 +150,7 @@ new class extends Component
                 ->onConfirm('reloadPage')
                 ->show();
 
-            $this->dispatch('absen-success');
+            // $this->dispatch('absen-success');
             return;
         }
 
@@ -187,7 +187,7 @@ new class extends Component
             'note_pulang'           => $this->note,
         ]);
 
-        $this->dispatch('absen-success');
+        // $this->dispatch('absen-success');
         LivewireAlert::title('Absensi Berhasil')
             ->success()
             ->withOptions(['allowOutsideClick' => false])

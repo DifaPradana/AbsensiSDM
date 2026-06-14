@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('dokumen_izin')->nullable();
             $table->date('akhir_izin')->nullable();
             $table->text('note')->nullable();
-            $table->enum('status', ['menunggu konfirmasi', 'disetujui', 'ditolak'])->default('menunggu konfirmasi');
             $table->timestamps();
         });
     }

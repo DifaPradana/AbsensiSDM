@@ -63,7 +63,7 @@ class DatabaseSeeder extends Seeder
             'is_active' => true,
             'is_password_default' => false,
             'password' => 'loremipsum',
-            'role_id' => 2,
+            'role_id' => 4,
         ]);
 
         LokasiAbsensi::create([

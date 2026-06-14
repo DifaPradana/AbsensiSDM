@@ -83,11 +83,11 @@
                         <span>
                             <i class="ti ti-file"></i>
                         </span>
-                        <span class="hide-menu">Export Absensi</span>
+                        <span class="hide-menu">Hasil Export Absensi</span>
                     </a>
                 </li>
 
-                @elseif (auth()->user()->role_id == '2' || auth()->user()->role_id == '3')
+                @else
 
                 <li class="nav-small-cap">
                     <i class="ti ti-dots nav-small-cap-icon fs-4"></i>

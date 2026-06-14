@@ -51,11 +51,6 @@ new class extends Component {
                 $route = 'dashboard.page';
                 break;
 
-            case '2':
-            case '3':
-                $route = 'karyawan.absensi.page';
-                break;
-
             default:
                 $route = 'karyawan.absensi.page';
                 break;
