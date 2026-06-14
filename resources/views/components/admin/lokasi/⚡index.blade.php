@@ -1,67 +1,47 @@
 <?php
 
-use App\Models\Role;
-use App\Models\User;
+use App\Models\LokasiAbsensi;
 use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Livewire\Attributes\On;
 
 new class extends Component
 {
-
-    public $nama_karyawan;
-    public $password;
-    public $role;
-    public $status;
-    public $user_id;
-
     use WithPagination;
-    public $perPage = 20;
+
+    public $perPage = 10;
     public $search = '';
 
-    public function getRoles()
+    public $nama_lokasi;
+    public $latitude_lokasi;
+    public $longitude_lokasi;
+    public $radius_meter;
+
+    public function render()
     {
-        return Role::all();
+        return $this->view([
+            'lokasi' => LokasiAbsensi::query()
+                ->search($this->search)
+                ->orderBy('lokasi_id', 'asc')
+                ->paginate($this->perPage)
+        ])
+            ->layout('layouts.main')
+            ->title('Absensi | Lokasi');
     }
 
 
-    public function closeModal()
-    {
-        $this->reset();
-        $this->resetValidation();
-    }
-
-    #[On('akun-created')]
+    #[On('success')]
     public function refreshData()
     {
         $this->resetPage();
     }
 
-    #[On('success')]
-    public function render()
+    public function delete(LokasiAbsensi $lokasi)
     {
-        return $this->view([
-            'users' => User::select(
-                'user_id',
-                'nama_karyawan',
-                'is_active',
-                'role_id',
-                'created_at'
-            )
-                ->search($this->search)
-                ->orderBy('user_id', 'asc')
-                ->paginate($this->perPage)
-        ])
-            ->layout('layouts.main')
-            ->title('Absensi | Account');
-    }
-
-    public function delete(User $user)
-    {
-        $user->delete();
+        $lokasi->delete();
         LivewireAlert::title('Berhasil')
-            ->text('Kamu berhasil delete akun')
+            ->text('Kamu berhasil delete lokasi')
             ->success()
             ->toast()
             ->position('top-end')
@@ -69,9 +49,9 @@ new class extends Component
             ->show();
     }
 
-    public function editAkun($user_id)
+    public function editLokasi($lokasi_id)
     {
-        $this->dispatch('open-edit-akun', user_id: $user_id);
+        $this->dispatch('open-edit-lokasi', lokasi_id: $lokasi_id);
         // dd("Kirim dispatch + $user_id");
     }
 };
@@ -80,13 +60,13 @@ new class extends Component
 <div class="container-fluid">
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title fw-semibold mb-4">Manajemen Akun</h5>
-            <a href="#tambahAkunModal" data-bs-toggle="modal" class="btn btn-primary m-1">
-                Tambah Akun
+            <h5 class="card-title fw-semibold mb-4">Manajemen Lokasi</h5>
+            <a href="#tambahLokasiModal" data-bs-toggle="modal" class="btn btn-primary m-1">
+                Tambah Lokasi
             </a>
         </div>
-        <livewire:admin.account.create-account />
-        <livewire:admin.account.edit-account />
+        <livewire:admin.lokasi.create-lokasi />
+        <livewire:admin.lokasi.edit-lokasi />
 
         <div>
             {{-- <section class="mt-10"> --}}
@@ -106,46 +86,41 @@ new class extends Component
                         <table class="w-full border border-gray-300 text-sm text-left">
                             <thead class="text-xs text-gray-700 uppercase bg-gray-100">
                                 <tr>
-                                    <th scope="col" class="border border px-4 py-3 text-center">Nama</th>
-                                    <th scope="col" class="border px-4 py-3 text-center">Role</th>
-                                    <th scope="col" class="border px-4 py-3 text-center">Status</th>
-                                    <!-- <th scope="col" class="border px-4 py-3 text-center">dibuat</th> -->
+                                    <th scope="col" class="border border px-4 py-3 text-center">Nama lokasi</th>
+                                    <th scope="col" class="border px-4 py-3 text-center">Latitude</th>
+                                    <th scope="col" class="border px-4 py-3 text-center">Longitude</th>
+                                    <th scope="col" class="border px-4 py-3 text-center">Radius Meter</th>
                                     <th scope="col" class="border px-4 py-3 text-center">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
 
-                                @if ($users->isEmpty())
+                                @if ($lokasi->isEmpty())
                                 <tr>
                                     <td colspan="6" class="border px-4 py-3 text-center text-black">Tidak ditemukan</td>
                                 </tr>
                                 @else
-                                @foreach ($users as $user)
-                                <tr wire:key="{{ $user->user_id }}" class="border-b dark:border-gray-300">
-                                    <td
-                                        class="border px-4 py-3 text-center text-black {{ auth()->user()->nama_karyawan === $user->nama_karyawan ? 'text-red-500' : '' }}">
-                                        {{ ucfirst($user->nama_karyawan) }}
-                                        {{ auth()->user()->nama_karyawan === $user->nama_karyawan ? '(Anda)' : '' }}
+                                @foreach ($lokasi as $item)
+                                <tr wire:key="{{ $item->lokasi_id }}" class="border-b dark:border-gray-300">
+                                    <td class="border px-4 py-3 text-black text-center">{{ $item->nama_lokasi }}
                                     </td>
-                                    <td class="border px-4 py-3 text-black text-center">{{ $user->role->nama_role }}
+                                    <td class="border px-4 py-3 text-black text-center">{{ $item->latitude_lokasi }}
                                     </td>
-                                    <td class="border px-4 py-3 text-center text-black">
-                                        {{ $user->is_active ? 'Aktif' : 'Nonaktif' }}
+                                    <td class="border px-4 py-3 text-black text-center">{{ $item->longitude_lokasi }}
                                     </td>
-                                    <!-- <td class="border px-4 py-3 text-center text-black">
-                                        {{ $user->created_at->format('d/m/Y - H:i:s') }}
-                                    </td> -->
+                                    <td class="border px-4 py-3 text-black text-center">{{ $item->radius_meter }}
+                                    </td>
                                     <td class="px-4 py-3  text-center text-black">
                                         <button
                                             type="button"
-                                            wire:click="editAkun({{ $user->user_id }})"
+                                            wire:click="editLokasi({{ $item->lokasi_id }})"
                                             wire:loading.attr="disabled"
                                             class="btn btn-warning m-1">
                                             <i class="ti ti-pencil"></i>
                                         </button>
                                         <button
-                                            onclick="confirm('Kamu akan menghapus akun {{ $user->nama_karyawan }} secara permanen, apakah yakin?') || event.stopImmediatePropagation()"
-                                            wire:click="delete({{ $user->user_id }})"
+                                            onclick="confirm('Kamu akan menghapus Lokasi {{ $item->nama_lokasi }} secara permanen, apakah yakin?') || event.stopImmediatePropagation()"
+                                            wire:click="delete({{ $item->lokasi_id }})"
                                             class="btn btn-danger m-1">
                                             <i class="ti ti-trash" aria-hidden="true"></i>
                                         </button>
@@ -171,7 +146,7 @@ new class extends Component
                                 </select>
                             </div>
                         </div>
-                        {{ $users->links() }}
+                        {{ $lokasi->links() }}
                     </div>
                 </div>
                 {{-- </section> --}}
@@ -182,14 +157,14 @@ new class extends Component
     <script>
         function registerListeners() {
             Livewire.on('show-edit-modal', () => {
-                const modalEl = document.getElementById('editAkunModal');
+                const modalEl = document.getElementById('editLokasiModal');
                 if (!modalEl) return;
                 let modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
                 if (!modalEl.classList.contains('show')) modal.show();
             });
 
             Livewire.on('hide-edit-modal', () => {
-                const modal = bootstrap.Modal.getInstance(document.getElementById('editAkunModal'));
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editLokasiModal'));
                 modal?.hide();
             });
         }

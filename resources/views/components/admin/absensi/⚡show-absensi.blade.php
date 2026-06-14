@@ -281,11 +281,10 @@ new class extends Component
                                                     onclick="hideModal('modalMasuk{{ $absensi->absensi_id }}')"></button>
                                             </div>
                                             <div class="modal-body text-center">
-                                                @if($absensi->photo_masuk)
-                                                <img src="{{ asset('storage/' . $absensi->photo_masuk) }}?v={{ time() }}"
-                                                    alt="Foto Masuk" class="img-fluid rounded">
+                                                @if ($absensi->photo_masuk)
+                                                <img src="{{ Storage::url($absensi->photo_masuk) }}">
                                                 @else
-                                                <p class="text-muted mb-0">Foto masuk tidak tersedia</p>
+                                                <span class="text-muted">Foto tidak tersedia</span>
                                                 @endif
                                             </div>
                                             <div class="modal-footer">
@@ -306,11 +305,10 @@ new class extends Component
                                                     onclick="hideModal('modalPulang{{ $absensi->absensi_id }}')"></button>
                                             </div>
                                             <div class="modal-body text-center">
-                                                @if($absensi->photo_pulang)
-                                                <img src="{{ asset('storage/' . $absensi->photo_pulang) }}?v={{ time() }}"
-                                                    alt="Foto Pulang" class="img-fluid rounded">
+                                                @if ($absensi->photo_pulang)
+                                                <img src="{{ Storage::url($absensi->photo_masuk) }}">
                                                 @else
-                                                <p class="text-muted mb-0">Foto pulang tidak tersedia</p>
+                                                <span class="text-muted">Foto tidak tersedia</span>
                                                 @endif
                                             </div>
                                             <div class="modal-footer">

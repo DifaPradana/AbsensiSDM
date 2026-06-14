@@ -31,11 +31,19 @@
                     <span class="hide-menu">Essential</span>
                 </li>
                 <li class="sidebar-item">
+                    <a class="sidebar-link" href="{{route('lokasi.page')}}" aria-expanded="false">
+                        <span>
+                            <i class="ti ti-gps"></i>
+                        </span>
+                        <span class="hide-menu">Lokasi</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
                     <a class="sidebar-link" href="{{route('account.page')}}" aria-expanded="false">
                         <span>
                             <i class="ti ti-user-plus"></i>
                         </span>
-                        <span class="hide-menu">Tambah Akun</span>
+                        <span class="hide-menu">Akun</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
@@ -43,7 +51,7 @@
                         <span>
                             <i class="ti ti-user-plus"></i>
                         </span>
-                        <span class="hide-menu">Tambah Role</span>
+                        <span class="hide-menu">Role</span>
                     </a>
                 </li>
                 <li class="nav-small-cap">

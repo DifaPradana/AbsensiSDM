@@ -62,7 +62,7 @@ new class extends Component
         ];
 
         $this->validate([
-            'nama_karyawan' => ['required', 'min:3', 'max:100'],
+            'nama_karyawan' => ['required', 'string', 'min:3', 'max:100'],
             'role_id' => 'required',
             'status' => 'required',
         ], $message);
