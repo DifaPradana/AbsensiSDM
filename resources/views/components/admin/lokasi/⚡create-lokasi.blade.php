@@ -20,16 +20,16 @@
                 'nama_lokasi.min' => 'Nama lokasi minimal 3 karakter',
                 'nama_lokasi.max' => 'Nama lokasi maksimal 100 karakter',
                 'latitude_lokasi.required' => 'Latitude wajib diisi',
-                'latitude_lokasi.max' => 'Latitude maksimal 10 digit',
                 'longitude_lokasi.required' => 'Longitude wajib diisi',
-                'longitude_lokasi.max' => 'Longitude maksimal 10 digit',
+                'longitude_lokasi.between' => 'Longitude harus berada antara -180 sampai 180',
+                'latitude_lokasi.between' => 'Latitude harus berada antara -90 sampai 90',
             ];
 
 
             $this->validate([
                 'nama_lokasi' => ['required', 'string', 'min:3', 'max:100'],
-                'latitude_lokasi' => ['required', 'numeric', 'max:10'],
-                'longitude_lokasi' => ['required', 'numeric', 'max:10'],
+                'latitude_lokasi' => ['required', 'numeric', 'between:-90,90'],
+                'longitude_lokasi' => ['required', 'numeric', 'between:-180,180'],
                 'radius_meter' => ['required', 'numeric']
             ], $message);
 
