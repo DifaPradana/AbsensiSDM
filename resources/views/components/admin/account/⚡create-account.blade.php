@@ -36,7 +36,7 @@
             ], $message);
 
             User::create([
-                'nama_karyawan' => $this->nama_karyawan,
+                'nama_karyawan' => strtolower($this->nama_karyawan),
                 'password' => $this->password,
                 'role_id' => $this->role_id,
                 'is_password_default' => true,
