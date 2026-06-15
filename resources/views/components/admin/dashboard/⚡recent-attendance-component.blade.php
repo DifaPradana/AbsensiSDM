@@ -21,11 +21,12 @@ new class extends Component
         $attendances = [];
 
         foreach ($absensis as $absen) {
+            if (!$absen->user) continue; // skip if user truly missing
 
             if (!empty($absen->waktu_absen_masuk)) {
                 $attendances[] = [
                     'nama' => $absen->user->nama_karyawan,
-                    'role' => $absen->user->role->nama_role ?? '-',
+                    'role' => optional($absen->user->role)->nama_role ?? '-',
                     'tipe' => 'Masuk',
                     'status' => $absen->status_absensi_masuk,
                     'waktu' => $absen->waktu_absen_masuk,
@@ -35,7 +36,7 @@ new class extends Component
             if (!empty($absen->waktu_absen_pulang)) {
                 $attendances[] = [
                     'nama' => $absen->user->nama_karyawan,
-                    'role' => $absen->user->role->nama_role ?? '-',
+                    'role' => optional($absen->user->role)->nama_role ?? '-',
                     'tipe' => 'Pulang',
                     'status' => $absen->status_absensi_pulang,
                     'waktu' => $absen->waktu_absen_pulang,
