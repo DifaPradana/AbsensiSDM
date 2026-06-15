@@ -115,6 +115,7 @@ new class extends Component
                                     <th class="border px-4 py-3 text-center">Tanggal Akhir</th>
                                     <th class="border px-4 py-3 text-center">Dokumen Izin</th>
                                     <th class="border px-4 py-3 text-center">Note</th>
+                                    <th class="border px-4 py-3 text-center">Status</th>
                                     <th class="border px-4 py-3 text-center">Action</th>
                                 </tr>
                             </thead>
@@ -167,6 +168,20 @@ new class extends Component
                                     </td>
                                     <td class="border px-4 py-3 text-center">
                                         {{ $izin->note ?? '-' }}
+                                    </td>
+                                    <td class="border px-4 py-3 text-center">
+                                        @php
+                                        $status = $izin->status ?? '-';
+                                        $badgeClass = match(strtolower($status)) {
+                                        'disetujui' => 'bg-green-100 text-green-800',
+                                        'menunggu konfirmasi' => 'bg-yellow-100 text-yellow-800',
+                                        'ditolak' => 'bg-red-100 text-red-800',
+                                        default => 'bg-gray-100 text-gray-800',
+                                        };
+                                        @endphp
+                                        <span class="px-2 py-1 rounded-full text-xs font-semibold {{ $badgeClass }}">
+                                            {{ ucfirst($status) }}
+                                        </span>
                                     </td>
                                     <td class="px-4 py-3  text-center text-black">
                                         <button

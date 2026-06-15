@@ -85,7 +85,7 @@ new class extends Component
                     @php
                     $badgeClass = match($izin->status) {
                     'menunggu konfirmasi' => 'bg-warning',
-                    'batal' => 'bg-danger',
+                    'ditolak' => 'bg-danger',
                     'disetujui' => 'bg-success',
                     default => 'bg-secondary'
                     };
@@ -155,18 +155,17 @@ new class extends Component
                             <div class="mt-2 d-flex justify-content-between align-items-center">
                                 @if($izin->dokumen_izin)
                                 <div>
-
                                     <button
                                         type="button"
                                         class="btn btn-primary btn-sm"
                                         onclick="showModal('modalDokumen{{ $izin->izin_id }}')">
-
-                                        <i class=" ti ti-eye"></i>
+                                        <i class="ti ti-eye"></i>
                                         Lihat Dokumen
-
                                     </button>
                                 </div>
                                 @endif
+
+                                @if($izin->status === 'menunggu konfirmasi')
                                 <div>
                                     <button
                                         onclick="confirm('Kamu akan menghapus izin secara permanen, apakah yakin?') || event.stopImmediatePropagation()"
@@ -175,6 +174,7 @@ new class extends Component
                                         <i class="ti ti-trash" aria-hidden="true"></i>
                                     </button>
                                 </div>
+                                @endif
                             </div>
                         </div>
                     </div>

@@ -36,97 +36,67 @@ new class extends Component {
 
     public function izinUpdate()
     {
-        $message = [
-            'status.required' => 'status wajib diisi',
-            'status.in' => 'status tidak valid',
-        ];
-
         $this->validate([
             'status' => 'required|in:menunggu konfirmasi,disetujui,ditolak'
-        ], $message);
+        ], [
+            'status.required' => 'Status wajib diisi',
+            'status.in' => 'Status tidak valid',
+        ]);
 
-        $izin = IzinAbsen::find($this->izin_id);
+        $izin = IzinAbsen::with('user.role')->find($this->izin_id);
 
         if (!$izin) {
-            LivewireAlert::title('Izin tidak ditemukan')
-                ->error()
-                ->show();
+            LivewireAlert::title('Izin tidak ditemukan')->error()->show();
+            return;
         }
 
-        $izin->update([
-            'status' => $this->status
-        ]);
+        if ($this->status === 'disetujui') {
+            $mulai  = Carbon::parse($izin->mulai_izin);
+            $akhir  = Carbon::parse($izin->akhir_izin ?? $izin->mulai_izin);
+            $user   = $izin->user;
+            $role   = $user->role;
+
+            $tanggal = $mulai->copy();
+            while ($tanggal->lte($akhir)) {
+                $sudahAda = Absensi::where('user_id', $user->user_id)
+                    ->whereDate('waktu_absen_masuk', $tanggal)
+                    ->exists();
+
+                if (!$sudahAda) {
+                    Absensi::create([
+                        'user_id'               => $user->user_id,
+                        'tipe_absensi'          => $izin->tipe_izin,
+                        'waktu_absen_masuk'     => $tanggal->copy()->setTimeFromTimeString($role->jadwal_masuk),
+                        'waktu_absen_pulang'    => $tanggal->copy()->setTimeFromTimeString($role->jadwal_pulang),
+                        'lokasi_masuk'          => 'Izin',
+                        'lokasi_pulang'         => 'Izin',
+                        'latitude_masuk'        => '0.0',
+                        'longitude_masuk'       => '0.0',
+                        'latitude_pulang'       => '0.0',
+                        'longitude_pulang'      => '0.0',
+                        'status_absensi_masuk'  => ucfirst($izin->tipe_izin),
+                        'status_absensi_pulang' => ucfirst($izin->tipe_izin),
+                        'photo_masuk'           => $izin->dokumen_izin ?? null,
+                        'photo_pulang'          => $izin->dokumen_izin ?? null,
+                        'note_masuk'            => $izin->note ?? 'Dibuatkan otomatis dari pengajuan izin',
+                        'note_pulang'           => $izin->note ?? 'Dibuatkan otomatis dari pengajuan izin',
+                    ]);
+                }
+                $tanggal->addDay();
+            }
+        }
+
+        $izin->update(['status' => $this->status]);
 
         $this->dispatch('hide-edit-modal');
         $this->reset();
         $this->dispatch('success');
-        LivewireAlert::title('Berhasil Izin')
-            ->success()
-            ->timer(3000)
-            ->toast()
-            ->position('top-end')
-            ->show();
-    }
 
-    public function konfirmasi($izin_id, $aksi)
-    {
-        $izin = IzinAbsen::with('user.role')->findOrFail($izin_id);
-
-        if ($aksi === 'ditolak') {
-            $izin->update(['status' => 'ditolak']);
-
-            $this->dispatch('close-edit-izin');
-            LivewireAlert::title('Izin ditolak')->warning()->timer(2000)->toast()->show();
-            return;
-        }
-
-        $mulai  = Carbon::parse($izin->mulai_izin);
-        $akhir  = Carbon::parse($izin->akhir_izin ?? $izin->mulai_izin);
-        $user   = $izin->user;
-        $role   = $user->role; // langsung dari relasi, sama seperti absen()
-
-        $tanggal = $mulai->copy();
-
-        while ($tanggal->lte($akhir)) {
-            $sudahAda = Absensi::where('user_id', $user->user_id)
-                ->whereDate('waktu_absen_masuk', $tanggal)
-                ->exists();
-
-            if (!$sudahAda) {
-                $waktuMasuk  = $tanggal->copy()->setTimeFromTimeString($role->jadwal_masuk);
-                $waktuPulang = $tanggal->copy()->setTimeFromTimeString($role->jadwal_pulang);
-
-                Absensi::create([
-                    'user_id'               => $user->user_id,
-                    'tipe_absensi'          => $izin->tipe_izin,
-                    'waktu_absen_masuk'     => $waktuMasuk,
-                    'waktu_absen_pulang'    => $waktuPulang,
-                    'lokasi_masuk'          => 'Izin',
-                    'lokasi_pulang'         => 'Izin',
-                    'latitude_masuk'        => '0.0',
-                    'longitude_masuk'       => '0.0',
-                    'latitude_pulang'       => '0.0',
-                    'longitude_pulang'      => '0.0',
-                    'status_absensi_masuk'  => ucfirst($izin->tipe_izin),
-                    'status_absensi_pulang' => ucfirst($izin->tipe_izin),
-                    'photo_masuk'           => $izin->dokumen_izin ?? null,
-                    'photo_pulang'          => $izin->dokumen_izin ?? null,
-                    'note_masuk'            => $izin->note ?? 'Dibuatkan otomatis dari pengajuan izin',
-                    'note_pulang'           => $izin->note ?? 'Dibuatkan otomatis dari pengajuan izin',
-                ]);
-            }
-
-            $tanggal->addDay();
-        }
-
-        $izin->update(['status' => 'disetujui']);
-
-        $this->dispatch('hide-edit-modal');
-        $this->dispatch('success');
-        LivewireAlert::title('Izin disetujui dan absensi dibuat')
+        LivewireAlert::title('Status izin berhasil diperbarui')
             ->success()
             ->timer(2500)
             ->toast()
+            ->position('top-end')
             ->show();
     }
 };
@@ -166,33 +136,18 @@ new class extends Component {
                         </div>
                         {{-- Di dalam modal footer --}}
                         <div class="modal-footer gap-2">
-                            <button
-                                type="button"
-                                class="btn btn-secondary"
-                                wire:click="$dispatch('close-edit-izin')">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" wire:click="closeModal">
                                 Batal
                             </button>
-
                             <button
-                                type="button"
-                                wire:click="konfirmasi({{ $izin_id }}, 'ditolak')"
+                                type="submit"
                                 wire:loading.attr="disabled"
-                                wire:target="konfirmasi"
-                                class="btn btn-danger d-inline-flex align-items-center gap-1">
-                                <i class="ti ti-x"></i>
-                                Tolak
-                            </button>
-
-                            <button
-                                type="button"
-                                wire:click="konfirmasi({{ $izin_id }}, 'disetujui')"
-                                wire:loading.attr="disabled"
-                                wire:target="konfirmasi"
-                                class="btn btn-success d-inline-flex align-items-center gap-1">
-                                <wire:loading.remove wire:target="konfirmasi">
+                                wire:target="izinUpdate"
+                                class="btn btn-primary d-inline-flex align-items-center gap-1">
+                                <wire:loading.remove wire:target="izinUpdate">
                                     <i class="ti ti-check"></i>
                                 </wire:loading.remove>
-                                Setujui
+                                Simpan
                             </button>
                         </div>
                     </form>

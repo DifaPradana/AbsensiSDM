@@ -127,6 +127,7 @@ new class extends Component
             ->success()
             ->timer(null)
             ->withOptions(['allowOutsideClick' => false])
+            ->withConfirmButton('Ok')
             ->onConfirm('reloadPage')
             ->show();
     }
