@@ -189,9 +189,6 @@ new class extends Component {
                                 wire:loading.attr="disabled"
                                 wire:target="konfirmasi"
                                 class="btn btn-success d-inline-flex align-items-center gap-1">
-                                <wire:loading wire:target="konfirmasi">
-                                    <span class="spinner-border spinner-border-sm"></span>
-                                </wire:loading>
                                 <wire:loading.remove wire:target="konfirmasi">
                                     <i class="ti ti-check"></i>
                                 </wire:loading.remove>
