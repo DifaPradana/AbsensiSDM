@@ -2,6 +2,7 @@
 
     use App\Models\Role;
     use App\Models\User;
+    use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
     use Livewire\Component;
 
     new class extends Component
@@ -45,6 +46,14 @@
             ]);
 
             $this->reset(['nama_karyawan', 'password', 'role_id']);
+
+            LivewireAlert::title('Berhasil Create')
+                ->text('Berhasil create data karyawan')
+                ->success()
+                ->timer(3000)
+                ->toast()
+                ->position('top-end')
+                ->show();
 
             $this->dispatch('akun-created')->to('admin.account.index');
             // dd('event dikirim');
