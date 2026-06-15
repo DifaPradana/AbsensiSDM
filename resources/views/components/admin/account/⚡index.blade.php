@@ -124,10 +124,10 @@ new class extends Component
                                 <tr wire:key="{{ $user->user_id }}" class="border-b dark:border-gray-300">
                                     <td
                                         class="border px-4 py-3 text-center text-black {{ auth()->user()->nama_karyawan === $user->nama_karyawan ? 'text-red-500' : '' }}">
-                                        {{ ucfirst($user->nama_karyawan) }}
+                                        {{ ucwords($user->nama_karyawan) }}
                                         {{ auth()->user()->nama_karyawan === $user->nama_karyawan ? '(Anda)' : '' }}
                                     </td>
-                                    <td class="border px-4 py-3 text-black text-center">{{ $user->role->nama_role }}
+                                    <td class="border px-4 py-3 text-black text-center">{{ ucwords($user->role->nama_role) }}
                                     </td>
                                     <td class="border px-4 py-3 text-center text-black">
                                         {{ $user->is_active ? 'Aktif' : 'Nonaktif' }}
