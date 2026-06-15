@@ -8,6 +8,7 @@ use Livewire\Component;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
 use Illuminate\Support\Str;
+use Livewire\Attributes\On;
 use Livewire\WithFileUploads;
 
 new class extends Component
@@ -126,8 +127,14 @@ new class extends Component
             ->success()
             ->timer(null)
             ->withOptions(['allowOutsideClick' => false])
-            ->withConfirmButton('OK')
+            ->onConfirm('reloadPage')
             ->show();
+    }
+
+    #[On('absen-success')]
+    public function reloadPage()
+    {
+        $this->redirectRoute('karyawan.kehadiran.page');
     }
 };
 ?>
