@@ -317,10 +317,22 @@ new class extends Component
                                                     onclick="hideModal('modalMasuk{{ $absensi->absensi_id }}')"></button>
                                             </div>
                                             <div class="modal-body text-center">
-                                                @if ($absensi->photo_masuk)
-                                                <img src="{{ Storage::url($absensi->photo_masuk) }}">
+                                                @php
+                                                $ext = strtolower(pathinfo($absensi->photo_masuk, PATHINFO_EXTENSION));
+                                                @endphp
+
+                                                @if(in_array($ext, ['jpg','jpeg','png','webp']))
+                                                <img
+                                                    src="{{ asset('storage/'.$absensi->photo_masuk) }}"
+                                                    class="img-fluid rounded">
+                                                @elseif($ext === 'pdf')
+                                                <iframe
+                                                    src="{{ asset('storage/'.$absensi->photo_masuk) }}"
+                                                    width="100%"
+                                                    height="600">
+                                                </iframe>
                                                 @else
-                                                <span class="text-muted">Foto tidak tersedia</span>
+                                                <span class="text-muted">Dokumen tidak tersedia</span>
                                                 @endif
                                             </div>
                                             <div class="modal-footer">
@@ -341,10 +353,22 @@ new class extends Component
                                                     onclick="hideModal('modalPulang{{ $absensi->absensi_id }}')"></button>
                                             </div>
                                             <div class="modal-body text-center">
-                                                @if ($absensi->photo_pulang)
-                                                <img src="{{ Storage::url($absensi->photo_pulang) }}">
+                                                @php
+                                                $ext = strtolower(pathinfo($absensi->photo_pulang, PATHINFO_EXTENSION));
+                                                @endphp
+
+                                                @if(in_array($ext, ['jpg','jpeg','png','webp']))
+                                                <img
+                                                    src="{{ asset('storage/'.$absensi->photo_pulang) }}"
+                                                    class="img-fluid rounded">
+                                                @elseif($ext === 'pdf')
+                                                <iframe
+                                                    src="{{ asset('storage/'.$absensi->photo_pulang) }}"
+                                                    width="100%"
+                                                    height="600">
+                                                </iframe>
                                                 @else
-                                                <span class="text-muted">Foto tidak tersedia</span>
+                                                <span class="text-muted">Dokumen tidak tersedia</span>
                                                 @endif
                                             </div>
                                             <div class="modal-footer">
