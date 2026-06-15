@@ -10,7 +10,7 @@ new class extends Component
 
     public function mount()
     {
-        $absensis = Absensi::with('user')
+        $absensis = Absensi::with('user.role')
             ->whereHas('user')
             ->whereDate('waktu_absen_masuk', today())
             ->latest()
