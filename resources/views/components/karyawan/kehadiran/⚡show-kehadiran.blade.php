@@ -276,7 +276,7 @@ new class extends Component
                             </div>
                             <div class="modal-body text-center">
                                 @if ($absensi->photo_pulang)
-                                <img src="{{ Storage::url($absensi->photo_masuk) }}">
+                                <img src="{{ Storage::url($absensi->photo_pulang) }}">
                                 @else
                                 <span class="text-muted">Foto tidak tersedia</span>
                                 @endif
