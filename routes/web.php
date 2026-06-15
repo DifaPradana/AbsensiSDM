@@ -26,3 +26,19 @@ Route::group(['middleware' => ['auth', 'nonadmin'], 'prefix' => 'karyawan'], fun
     Route::livewire('/izin-absen', 'karyawan.izin-absen')->name('karyawan.izin-absen.page');
     Route::livewire('/history-izin-absen', 'karyawan.history-izin')->name('karyawan.history-izin');
 });
+
+Route::get('/fix-cache', function () {
+    $path = storage_path('framework/views');
+    $files = glob($path . '/*.php');
+    foreach ($files as $file) {
+        @unlink($file);
+    }
+    // Also clear livewire compiled classes
+    $lwPath = $path . '/livewire/classes';
+    if (is_dir($lwPath)) {
+        foreach (glob($lwPath . '/*.php') as $file) {
+            @unlink($file);
+        }
+    }
+    return 'Done! Cache cleared.';
+});
