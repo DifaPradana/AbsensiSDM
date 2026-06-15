@@ -169,7 +169,7 @@ new class extends Component
                 <input type="file" wire:model="photo" accept="image/*, .pdf" capture="user" class="form-control" id="photo">
                 <div wire:loading wire:target="photo" class="text-primary mt-2">
                     <span class="spinner-border spinner-border-sm"></span>
-                    Uploading....
+                    Uploading...
                 </div>
                 <div class="divider"></div>
                 <div class="row align-items-end g-3">
