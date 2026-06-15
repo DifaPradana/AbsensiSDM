@@ -11,7 +11,9 @@ new class extends Component
     public function mount()
     {
         $absensis = Absensi::with('user.role')
-            ->whereHas('user')
+            ->whereHas('user', function ($query) {
+                $query->withTrashed(); // include soft-deleted users
+            })
             ->whereDate('waktu_absen_masuk', today())
             ->latest()
             ->get();
