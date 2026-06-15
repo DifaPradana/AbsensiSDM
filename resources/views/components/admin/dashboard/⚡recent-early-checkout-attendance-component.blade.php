@@ -7,16 +7,20 @@ new class extends Component
 {
     public function getRecentAttendance()
     {
-        $absensis = Absensi::with('user')
-            ->whereDate('waktu_absen_masuk', today()) // ← filter hari ini
+        $absensis = Absensi::with(['user' => function ($query) {
+            $query->withTrashed();
+        }])
+            ->whereHas('user', function ($query) {
+                $query->withTrashed();
+            })
+            ->whereDate('waktu_absen_masuk', today())
             ->latest()
-            ->get(); // ← hapus take(20) agar semua data hari ini masuk
+            ->get();
 
-        $masuk = [];
         $pulang = [];
 
         foreach ($absensis as $absen) {
-
+            if (!$absen->user) continue; // skip if user missing
 
             if (
                 !empty($absen->status_absensi_pulang) &&

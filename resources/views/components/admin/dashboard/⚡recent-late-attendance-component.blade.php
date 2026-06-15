@@ -7,16 +7,21 @@ new class extends Component
 {
     public function getRecentAttendance()
     {
-        $absensis = Absensi::with('user')
-            ->whereHas('user')
+        $absensis = Absensi::with(['user' => function ($query) {
+            $query->withTrashed();
+        }])
+            ->whereHas('user', function ($query) {
+                $query->withTrashed();
+            })
             ->whereDate('waktu_absen_masuk', today())
             ->latest()
             ->get();
 
         $masuk = [];
-        $pulang = [];
 
         foreach ($absensis as $absen) {
+            if (!$absen->user) continue; // skip if user missing
+
             if (
                 !empty($absen->status_absensi_masuk) &&
                 str_starts_with($absen->status_absensi_masuk, 'Terlambat')
