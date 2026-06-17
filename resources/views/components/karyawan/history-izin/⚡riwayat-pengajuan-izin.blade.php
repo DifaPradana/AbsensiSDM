@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\IzinAbsen;
+use Illuminate\Support\Facades\Auth;
 use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -37,6 +38,7 @@ new class extends Component
         return [
             'izins' => IzinAbsen::query()
                 ->with('user')
+                ->where('user_id', Auth::id())
                 ->latest('created_at')
                 ->paginate($this->perPage),
         ];
