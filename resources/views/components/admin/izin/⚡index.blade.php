@@ -14,7 +14,9 @@ new class extends Component
     #[On('success')]
     public function render()
     {
-        $query = IzinAbsen::with('user')->latest();
+        $query = IzinAbsen::with('user')
+            ->whereHas('user') // hanya user yang tidak soft delete
+            ->latest();
 
         if ($this->search) {
             $query->whereHas(

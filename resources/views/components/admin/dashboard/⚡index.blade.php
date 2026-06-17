@@ -18,14 +18,19 @@ new class extends Component
 
         return [
             'totalWaiting' => IzinAbsen::query()
+                ->whereHas('user') // user tidak soft delete
                 ->where('status', 'menunggu konfirmasi')
                 ->where('created_at', '>=', now()->subDays(3))
                 ->count(),
+
             'totalApproved' => IzinAbsen::query()
+                ->whereHas('user')
                 ->where('status', 'disetujui')
                 ->where('created_at', '>=', $startOfMonth)
                 ->count(),
+
             'totalRejected' => IzinAbsen::query()
+                ->whereHas('user')
                 ->where('status', 'ditolak')
                 ->where('created_at', '>=', $startOfMonth)
                 ->count(),

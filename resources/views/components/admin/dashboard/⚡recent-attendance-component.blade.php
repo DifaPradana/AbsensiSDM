@@ -2,17 +2,16 @@
 
 use App\Models\Absensi;
 use Livewire\Component;
+use Livewire\Attributes\Computed;
 
 new class extends Component
 {
-
-    public $attendances = [];
-
-    public function mount()
+    #[Computed]
+    public function attendances()
     {
         $absensis = Absensi::with('user.role')
             ->whereHas('user', function ($query) {
-                $query->withTrashed(); // include soft-deleted users
+                $query->withTrashed();
             })
             ->whereDate('waktu_absen_masuk', today())
             ->latest()
@@ -21,7 +20,7 @@ new class extends Component
         $attendances = [];
 
         foreach ($absensis as $absen) {
-            if (!$absen->user) continue; // skip if user truly missing
+            if (!$absen->user) continue;
 
             if (!empty($absen->waktu_absen_masuk)) {
                 $attendances[] = [
@@ -44,15 +43,15 @@ new class extends Component
             }
         }
 
-        $this->attendances = collect($attendances)
+        return collect($attendances)
             ->sortByDesc('waktu')
             ->values()
-            ->toArray(); // opsional
+            ->toArray();
     }
 };
 ?>
 
-<div class="col-lg-12 d-flex align-items-stretch">
+<div class="col-lg-12 d-flex align-items-stretch" wire:poll.30s>
     <div class="card w-100">
         <div class="card-body p-4" style="height: 480px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #dee2e6 transparent;">
             <h5 class="card-title fw-semibold mb-4">Recent Attendance</h5>
@@ -78,7 +77,7 @@ new class extends Component
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($this->attendances ?? [] as $index => $item)
+                        @forelse($this->attendances as $index => $item)
                         <tr>
                             <td class="border-bottom-0">
                                 <h6 class="fw-semibold mb-0">{{ $index + 1 }}</h6>
@@ -88,7 +87,7 @@ new class extends Component
                                 <span class="fw-normal">{{ $item['role'] }}</span>
                             </td>
                             <td class="border-bottom-0">
-                                <span class="badge rounded-3 fw-semibold {{ $item['tipe'] === 'Masuk' ? 'bg-light-primary text-primary' : 'bg-light-primary text-primary' }}">
+                                <span class="badge rounded-3 fw-semibold bg-light-primary text-primary">
                                     {{ $item['tipe'] }}
                                 </span>
                             </td>
@@ -116,7 +115,6 @@ new class extends Component
                                 Tidak ada data absensi hari ini
                             </td>
                         </tr>
-
                         @endforelse
                     </tbody>
                 </table>

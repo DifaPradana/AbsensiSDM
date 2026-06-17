@@ -2,13 +2,15 @@
 
 use App\Models\Absensi;
 use Livewire\Component;
+use Livewire\Attributes\Computed;
 
 new class extends Component
 {
-    public function getRecentAttendance()
+    #[Computed]
+    public function recentAttendance()
     {
         $absensis = Absensi::with('user.role')
-            ->whereHas('user') // hanya user aktif
+            ->whereHas('user')
             ->whereDate('waktu_absen_masuk', today())
             ->latest()
             ->get();
@@ -37,19 +39,16 @@ new class extends Component
 };
 ?>
 
-
-
-@php($attendance = $this->getRecentAttendance())
-<div class="col-lg-6 d-flex align-items-stretch">
+<div class="col-lg-6 d-flex align-items-stretch" wire:poll.30s>
     <div class="card w-100">
         <div class="card-body p-4" style="min-height: 240px; max-height: 360px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #dee2e6 transparent;">
             <div class="mb-4">
                 <h5 class="card-title fw-semibold">Pulang Lebih Cepat Hari Ini</h5>
             </div>
 
-            @if($attendance['pulang']->isNotEmpty())
+            @if($this->recentAttendance['pulang']->isNotEmpty())
             <ul class="timeline-widget mb-0 position-relative mb-n5">
-                @foreach($attendance['pulang'] as $item)
+                @foreach($this->recentAttendance['pulang'] as $item)
                 <li class="timeline-item d-flex position-relative overflow-hidden">
                     <div class="timeline-time text-dark flex-shrink-0 text-end">
                         {{ \Carbon\Carbon::parse($item['waktu'])->format('H:i') }}
