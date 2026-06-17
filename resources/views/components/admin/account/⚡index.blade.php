@@ -143,12 +143,14 @@ new class extends Component
                                             class="btn btn-warning m-1">
                                             <i class="ti ti-pencil"></i>
                                         </button>
+                                        @if ($user->role->nama_role != 'admin')
                                         <button
                                             onclick="confirm('Kamu akan menghapus akun {{ $user->nama_karyawan }} secara permanen, apakah yakin?') || event.stopImmediatePropagation()"
                                             wire:click="delete({{ $user->user_id }})"
                                             class="btn btn-danger m-1">
                                             <i class="ti ti-trash" aria-hidden="true"></i>
                                         </button>
+                                        @endif
                                     </td>
                                 </tr>
                                 @endforeach
