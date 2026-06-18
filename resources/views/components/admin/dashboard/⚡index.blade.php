@@ -41,10 +41,6 @@ new class extends Component
 
 
 <div>
-    @push('title')
-    <title>Dashboard </title>
-    @endpush
-
     <div class="col-lg-12 d-flex align-items-stretch">
         <div class="card w-100">
             <div class="card-body p-4">

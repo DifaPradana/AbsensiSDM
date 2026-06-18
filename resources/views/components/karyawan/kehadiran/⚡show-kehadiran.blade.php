@@ -148,10 +148,21 @@ new class extends Component
                             </div>
 
                             <div class="abs-row">
-                                <span class="abs-label">Waktu</span>
+                                <span class="abs-label">Status</span>
                                 <span class="abs-val">
                                     @if($statusMasuk)
                                     <span class="abs-badge {{ $statusMasukClass }}">{{ $statusMasuk }}</span>
+                                    @else
+                                    <span class="abs-muted">—</span>
+                                    @endif
+                                </span>
+                            </div>
+
+                            <div class="abs-row">
+                                <span class="abs-label">Waktu</span>
+                                <span class="abs-val">
+                                    @if($absensi->waktu_absen_masuk)
+                                    <span>{{ \Carbon\Carbon::parse($absensi->waktu_absen_masuk)->format('H:i') }}</span>
                                     @else
                                     <span class="abs-muted">—</span>
                                     @endif
@@ -198,10 +209,21 @@ new class extends Component
                             </div>
 
                             <div class="abs-row">
-                                <span class="abs-label">Waktu</span>
+                                <span class="abs-label">Status</span>
                                 <span class="abs-val">
                                     @if($statusPulang)
                                     <span class="abs-badge {{ $statusPulangClass }}">{{ $statusPulang }}</span>
+                                    @else
+                                    <span class="abs-muted">—</span>
+                                    @endif
+                                </span>
+                            </div>
+
+                            <div class="abs-row">
+                                <span class="abs-label">Waktu</span>
+                                <span class="abs-val">
+                                    @if($absensi->waktu_absen_pulang)
+                                    <span>{{ \Carbon\Carbon::parse($absensi->waktu_absen_pulang)->format('H:i') }}</span>
                                     @else
                                     <span class="abs-muted">—</span>
                                     @endif
