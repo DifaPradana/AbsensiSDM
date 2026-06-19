@@ -135,7 +135,7 @@ new class extends Component
     #[On('absen-success')]
     public function reloadPage()
     {
-        $this->redirectRoute('karyawan.kehadiran.page');
+        $this->redirectRoute('karyawan.history-izin');
     }
 };
 ?>
