@@ -277,7 +277,76 @@ new class extends Component
             });
         });
 
+        // Simpan blob hasil kompresi di sini
+        let compressedBlob = null;
+        let originalFileName = '';
 
+        document.getElementById('photo').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // Reset dulu
+            compressedBlob = null;
+            originalFileName = file.name;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 800;
+                    const scale = Math.min(1, MAX_WIDTH / img.width);
+                    canvas.width = img.width * scale;
+                    canvas.height = img.height * scale;
+
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                    canvas.toBlob(function(blob) {
+                        compressedBlob = blob;
+
+                        // Log ukuran
+                        const logEl = document.getElementById('photo-log');
+                        logEl.style.display = 'block';
+                        logEl.innerHTML = `
+                    📷 Original&nbsp;&nbsp;&nbsp;: <b>${(file.size / 1024).toFixed(2)} KB</b><br>
+                    ✅ Compressed : <b>${(blob.size / 1024).toFixed(2)} KB</b><br>
+                    📉 Reduction&nbsp;&nbsp;: <b>${((1 - blob.size / file.size) * 100).toFixed(1)}%</b><br>
+                    📐 Canvas&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <b>${canvas.width} x ${canvas.height} px</b>
+                `;
+
+                        // Inject file terkompresi langsung ke input
+                        const compressedFile = new File([blob], file.name, {
+                            type: 'image/jpeg'
+                        });
+                        const dataTransfer = new DataTransfer();
+                        dataTransfer.items.add(compressedFile);
+
+                        // Ganti file di input tanpa trigger event
+                        Object.defineProperty(e.target, 'files', {
+                            value: dataTransfer.files,
+                            writable: true,
+                        });
+
+                        // Upload ke Livewire dengan file yang sudah kecil
+                        $wire.upload('photo', compressedFile,
+                            () => {
+                                /* sukses */
+                            },
+                            () => {
+                                /* error */
+                            },
+                            (progress) => {
+                                /* progress */
+                            }
+                        );
+
+                    }, 'image/jpeg', 0.7);
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }); // <-- tanpa `true`, biarkan Livewire tidak ikut campur
 
         (function() {
             const alertBox = document.getElementById('alert-box');
@@ -326,6 +395,7 @@ new class extends Component
 
                             // alert('berhasil');
                         } catch (e) {
+                            alert('GPS Error');
                             window.location.reload();
                         }
 
