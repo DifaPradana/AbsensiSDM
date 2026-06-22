@@ -196,7 +196,7 @@ new class extends Component
                                         'hadir' => 'bg-green-100 text-green-800',
                                         'izin' => 'bg-yellow-100 text-yellow-800',
                                         'sakit' => 'bg-blue-100 text-blue-800',
-                                        'alfa' => 'bg-red-100 text-red-800',
+                                        'alpha' => 'bg-red-100 text-red-800',
                                         default => 'bg-gray-100 text-gray-800',
                                         };
                                         @endphp
@@ -207,8 +207,10 @@ new class extends Component
                                     <td class="border px-4 py-3 text-center">
                                         @php
                                         $badgeClass = match(true) {
-                                        str_starts_with($absensi['status_absensi_masuk'], 'Terlambat') => 'bg-danger',
-                                        default => 'bg-success',
+                                        $absensi['status_absensi_masuk'] === '-' => 'bg-danger',
+                                        $absensi['status_absensi_masuk'] === 'On Time' => 'bg-success',
+                                        str_starts_with($absensi['status_absensi_masuk'], 'Terlambat') => 'bg-warning',
+                                        default => 'bg-dark',
                                         };
                                         @endphp
                                         <span class="badge {{ $badgeClass }} rounded-3 fw-semibold">
@@ -236,7 +238,7 @@ new class extends Component
                                         @php
                                         $status = $absensi['status_absensi_pulang'] ?? '';
                                         $badgeClass = match(true) {
-                                        str_starts_with($status, 'Terlambat') => 'bg-danger',
+                                        str_starts_with($status, '-') => 'bg-danger',
                                         str_starts_with($status, 'Pulang Lebih Cepat') => 'bg-warning',
                                         empty($status) => '',
                                         default => 'bg-success',

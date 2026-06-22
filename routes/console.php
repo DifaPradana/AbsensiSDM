@@ -11,3 +11,8 @@ Artisan::command('inspire', function () {
 Schedule::command('absensi:delete-photos')
     ->monthlyOn(1, '02:00') // tanggal 1, jam 02:00
     ->withoutOverlapping();
+
+Schedule::command('absensi:create-alpha')
+    ->dailyAt('23:00')
+    ->weekdays()
+    ->withoutOverlapping();
