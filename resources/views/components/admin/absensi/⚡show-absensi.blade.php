@@ -14,7 +14,7 @@ new class extends Component
     public $search = '';
     public $tanggalAwal;
     public $tanggalAkhir;
-    public $perPage = 1;
+    public $perPage = 20;
     public bool $isExporting = false;
     public bool $exportDone = false;
     protected $paginationTheme = 'bootstrap';
