@@ -6,15 +6,18 @@ use App\Models\ExportFile;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
+use Livewire\WithPagination;
 
 new class extends Component
 {
+    use WithPagination;
     public $search = '';
     public $tanggalAwal;
     public $tanggalAkhir;
-    public $perPage = 20;
+    public $perPage = 1;
     public bool $isExporting = false;
     public bool $exportDone = false;
+    protected $paginationTheme = 'bootstrap';
 
     public function updatedTanggalAwal($value)
     {
@@ -415,7 +418,7 @@ new class extends Component
                         </div>
 
                         <div class="mt-3">
-                            {{ $absensis->links() }}
+                            {{ $absensis->links('livewire::bootstrap') }}
                         </div>
                     </div>
 
