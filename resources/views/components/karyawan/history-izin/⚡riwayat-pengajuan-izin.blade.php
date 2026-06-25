@@ -280,7 +280,7 @@ new class extends Component
                 </div>
             </div>
             <div class="mt-3">
-                {{ $izins->links() }}
+                {{ $izins->links('livewire::bootstrap') }}
             </div>
 
         </div>{{-- end card-body --}}

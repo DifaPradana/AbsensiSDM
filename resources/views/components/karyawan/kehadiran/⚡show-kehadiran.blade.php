@@ -2,13 +2,16 @@
 
 use App\Models\Absensi;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 new class extends Component
 {
+    use WithPagination;
+
     public $search = '';
     public $tanggalAwal;
     public $tanggalAkhir;
-    public $perPage = 20;
+    public $perPage = 1;
 
     public function updatedTanggalAwal($value)
     {
@@ -26,18 +29,26 @@ new class extends Component
 
     public function render()
     {
+        $query = Absensi::with('user')
+            ->whereHas('user', function ($query) {
+                $query->where('user_id', auth()->id());
+            })
+            ->search($this->search)
+            ->filterTanggal($this->tanggalAwal, $this->tanggalAkhir);
+
+        $summary = (clone $query)
+            ->selectRaw("
+            SUM(CASE WHEN tipe_absensi = 'hadir' THEN 1 ELSE 0 END) as hadir,
+            SUM(CASE WHEN tipe_absensi = 'izin'  THEN 1 ELSE 0 END) as izin,
+            SUM(CASE WHEN tipe_absensi = 'sakit' THEN 1 ELSE 0 END) as sakit,
+            SUM(CASE WHEN tipe_absensi = 'alpha' THEN 1 ELSE 0 END) as alfa
+        ")
+            ->first();
+
         return $this->view([
-            'absensis' => Absensi::with('user')
-                ->whereHas('user', function ($query) {
-                    $query->where('user_id', auth()->id());
-                })
-                ->search($this->search)
-                ->filterTanggal($this->tanggalAwal, $this->tanggalAkhir)
-                ->latest()
-                ->paginate($this->perPage),
-        ])
-            ->layout('layouts.main')
-            ->title('Absensi | Account');
+            'absensis' => $query->latest()->paginate($this->perPage),
+            'summary'  => $summary,
+        ])->layout('layouts.main');
     }
 };
 ?>
@@ -68,11 +79,10 @@ new class extends Component
 
             {{-- Summary Badge --}}
             @php
-            $total = $absensis->total();
-            $hadir = $absensis->getCollection()->where('tipe_absensi', 'hadir')->count();
-            $izin = $absensis->getCollection()->where('tipe_absensi', 'izin')->count();
-            $sakit = $absensis->getCollection()->where('tipe_absensi', 'sakit')->count();
-            $alfa = $absensis->getCollection()->where('tipe_absensi', 'alfa')->count();
+            $hadir = $summary->hadir ?? 0;
+            $izin = $summary->izin ?? 0;
+            $sakit = $summary->sakit ?? 0;
+            $alfa = $summary->alfa ?? 0;
             @endphp
             <div class="row g-2 mb-3">
                 <div class="col-6 col-md-3">
@@ -336,7 +346,7 @@ new class extends Component
                 </div>
             </div>
             <div class="mt-3">
-                {{ $absensis->links() }}
+                {{ $absensis->links('livewire::bootstrap') }}
             </div>
 
         </div>{{-- end card-body --}}
