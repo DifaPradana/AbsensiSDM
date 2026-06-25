@@ -16,3 +16,9 @@ Schedule::command('absensi:create-alpha')
     ->dailyAt('23:00')
     ->weekdays()
     ->withoutOverlapping();
+
+Schedule::command('export:delete-old-absensi --days=7')
+    ->daily()
+    ->at('00:00')
+    ->withoutOverlapping()
+    ->runInBackground();
