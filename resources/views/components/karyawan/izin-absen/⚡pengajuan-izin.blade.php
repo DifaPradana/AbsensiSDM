@@ -25,7 +25,7 @@ new class extends Component
 
     public function mount()
     {
-        $this->dropdownItem = ['izin', 'sakit'];
+        $this->dropdownItem = ['izin', 'sakit', 'cuti'];
     }
 
     public function izin()

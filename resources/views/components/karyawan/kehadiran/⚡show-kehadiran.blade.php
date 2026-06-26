@@ -11,7 +11,7 @@ new class extends Component
     public $search = '';
     public $tanggalAwal;
     public $tanggalAkhir;
-    public $perPage = 1;
+    public $perPage = 10;
 
     public function updatedTanggalAwal($value)
     {

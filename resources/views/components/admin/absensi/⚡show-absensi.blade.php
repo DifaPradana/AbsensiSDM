@@ -33,6 +33,16 @@ new class extends Component
         $this->search = '';
     }
 
+    public function updatedSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedPerPage()
+    {
+        $this->resetPage();
+    }
+
     public function exportCsv(): void
     {
         $this->isExporting = true;

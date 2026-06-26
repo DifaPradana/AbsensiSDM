@@ -46,11 +46,16 @@ new class extends Component {
 
         $user = Auth::user();
 
-        switch ($user->role_id) {
-            case '1':
+        switch ($user->role->nama_role) {
+            case 'admin':
                 $route = 'dashboard.page';
                 break;
-
+            case 'HRD':
+                $route = 'hrd.dashboard.page';
+                break;
+            case 'direktur':
+                $route = 'dashboard.page';
+                break;
             default:
                 $route = 'karyawan.absensi.page';
                 break;

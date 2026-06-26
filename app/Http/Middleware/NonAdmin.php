@@ -18,7 +18,7 @@ class NonAdmin
     {
         $user = Auth::user();
 
-        if ($user && $user->role_id != 1) {
+        if ($user && in_array($user->role->nama_role, ['admin', 'HRD', 'direktur'])) {
             return $next($request);
         }
 

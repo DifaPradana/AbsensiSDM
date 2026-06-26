@@ -22,4 +22,14 @@ class IzinAbsen extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'user_id');
     }
+
+    public function hrd()
+    {
+        return $this->belongsTo(User::class, 'hrd_id', 'user_id');
+    }
+
+    public function direktur()
+    {
+        return $this->belongsTo(User::class, 'direktur_id', 'user_id');
+    }
 }

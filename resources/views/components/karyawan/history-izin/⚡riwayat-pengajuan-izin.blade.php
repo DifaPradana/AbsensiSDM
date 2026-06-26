@@ -53,7 +53,9 @@ new class extends Component
             <div class="abs-grid">
                 {{-- Summary Badge --}}
                 @php
-                $totalWaiting = $izins->getCollection()->where('status', 'menunggu konfirmasi')->count();
+                $totalWaiting = $izins->getCollection()->filter(function ($item) {
+                return str_contains(strtolower($item->status), 'menunggu');
+                })->count();
                 $totalAcc = $izins->getCollection()->where('status', 'disetujui')->count();
                 $totalCancel = $izins->getCollection()->where('status', 'ditolak')->count();
                 @endphp
@@ -86,8 +88,10 @@ new class extends Component
 
                     @php
                     $badgeClass = match($izin->status) {
-                    'menunggu konfirmasi' => 'bg-warning',
-                    'ditolak' => 'bg-danger',
+                    'menunggu_hrd' => 'bg-warning',
+                    'menunggu_direktur' => 'bg-warning',
+                    'ditolak_hrd' => 'bg-danger',
+                    'ditolak_direktur' => 'bg-danger',
                     'disetujui' => 'bg-success',
                     default => 'bg-secondary'
                     };
@@ -96,6 +100,15 @@ new class extends Component
                     ? \Carbon\Carbon::parse($izin->mulai_izin)
                     ->diffInDays($izin->akhir_izin) + 1
                     : 1;
+
+                    $statusLabel = match($izin->status) {
+                    'menunggu_hrd' => 'Menunggu HRD',
+                    'menunggu_direktur' => 'Menunggu Direktur',
+                    'ditolak_hrd' => 'Ditolak HRD',
+                    'ditolak_direktur' => 'Ditolak Direktur',
+                    'disetujui' => 'Disetujui',
+                    default => ucfirst($izin->status)
+                    };
                     @endphp
 
                     <div class="card shadow-sm mb-3">
@@ -107,7 +120,7 @@ new class extends Component
                             </div>
 
                             <span class="badge {{ $badgeClass }}">
-                                {{ ucfirst($izin->status) }}
+                                {{ ucfirst($statusLabel) }}
                             </span>
 
                         </div>
