@@ -50,11 +50,11 @@ new class extends Component {
             case 'admin':
                 $route = 'dashboard.page';
                 break;
-            case 'HRD':
+            case 'hrd':
                 $route = 'hrd.dashboard.page';
                 break;
             case 'direktur':
-                $route = 'dashboard.page';
+                $route = 'direktur.dashboard.page';
                 break;
             default:
                 $route = 'karyawan.absensi.page';

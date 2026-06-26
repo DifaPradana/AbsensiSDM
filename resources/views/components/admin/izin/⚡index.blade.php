@@ -9,7 +9,19 @@ new class extends Component
 {
     public $perPage = 10;
     public $search = '';
-    public $statusFilter = 'menunggu_hrd'; // default sesuai enum baru
+
+    public string $statusFilter = 'all';
+
+    public function mount(): void
+    {
+        $role = strtolower(Auth::user()->role->nama_role ?? '');
+
+        $this->statusFilter = match ($role) {
+            'hrd'      => 'menunggu_hrd',
+            'direktur' => 'menunggu_direktur',
+            default    => 'all',
+        };
+    }
 
     #[On('success')]
     public function render()
@@ -86,14 +98,29 @@ new class extends Component
                                     wire:model.live="statusFilter"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 pr-8 appearance-none cursor-pointer">
                                     <option value="all">Semua Status</option>
-                                    <option value="menunggu_hrd">Menunggu HRD</option>
-                                    <option value="menunggu_direktur">Menunggu Direktur</option>
-                                    <option value="disetujui">Disetujui</option>
-                                    <option value="ditolak_hrd">Ditolak HRD</option>
-                                    <option value="ditolak_direktur">Ditolak Direktur</option>
+
+                                    @php $role = strtolower(Auth::user()->role->nama_role ?? ''); @endphp
+
+                                    @if($role === 'hrd')
+                                    <option value="menunggu_hrd" @selected($statusFilter==='menunggu_hrd' )>Menunggu HRD</option>
+                                    <option value="menunggu_direktur" @selected($statusFilter==='menunggu_direktur' )>Menunggu Direktur</option>
+                                    <option value="ditolak_hrd" @selected($statusFilter==='ditolak_hrd' )>Ditolak HRD</option>
+                                    <option value="ditolak_direktur" @selected($statusFilter==='ditolak_direktur' )>Ditolak Direktur</option>
+                                    <option value="disetujui" @selected($statusFilter==='disetujui' )>Disetujui</option>
+
+                                    @elseif($role === 'direktur')
+                                    <option value="menunggu_direktur" @selected($statusFilter==='menunggu_direktur' )>Menunggu Direktur</option>
+                                    <option value="ditolak_direktur" @selected($statusFilter==='ditolak_direktur' )>Ditolak Direktur</option>
+                                    <option value="disetujui" @selected($statusFilter==='disetujui' )>Disetujui</option>
+
+                                    @else
+                                    <option value="menunggu_hrd" @selected($statusFilter==='menunggu_hrd' )>Menunggu Review</option>
+                                    <option value="disetujui" @selected($statusFilter==='disetujui' )>Disetujui</option>
+                                    <option value="ditolak_hrd" @selected($statusFilter==='ditolak_hrd' )>Ditolak</option>
+                                    <option value="ditolak_direktur" @selected($statusFilter==='ditolak_direktur' )>Ditolak</option>
+                                    @endif
                                 </select>
                             </div>
-
                         </div>
 
                         {{-- Badge jumlah hasil --}}
@@ -101,7 +128,7 @@ new class extends Component
                             @php
                             $badgeMap = [
                             'menunggu_hrd' => 'bg-yellow-100 text-yellow-800',
-                            'menunggu_direktur' => 'bg-blue-100 text-blue-800',
+                            'menunggu_direktur' => 'bg-yellow-100 text-yellow-800',
                             'disetujui' => 'bg-green-100 text-green-800',
                             'ditolak_hrd' => 'bg-red-100 text-red-800',
                             'ditolak_direktur' => 'bg-red-100 text-red-800',

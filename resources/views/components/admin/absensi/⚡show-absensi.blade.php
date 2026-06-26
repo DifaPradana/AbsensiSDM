@@ -110,13 +110,12 @@ new class extends Component
 ?>
 
 <div class="container-fluid">
-
     {{-- Polling hanya aktif saat export berjalan --}}
     @if($isExporting)
     <div wire:poll.3s="checkExport"></div>
     @endif
 
-    <div class="card">
+    <div class="card" wire:poll.10s>
         <div class="card-body">
             <h5 class="card-title fw-semibold mb-4">Filter Tanggal</h5>
 

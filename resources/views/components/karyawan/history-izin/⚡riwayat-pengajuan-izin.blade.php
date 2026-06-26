@@ -46,7 +46,7 @@ new class extends Component
 };
 ?>
 
-<div class="container-fluid">
+<div wire:poll.15s class="container-fluid">
     <div class="card">
         <div class="card-body">
             {{-- Card List --}}
@@ -57,7 +57,7 @@ new class extends Component
                 return str_contains(strtolower($item->status), 'menunggu');
                 })->count();
                 $totalAcc = $izins->getCollection()->where('status', 'disetujui')->count();
-                $totalCancel = $izins->getCollection()->where('status', 'ditolak')->count();
+                $totalCancel = $izins->getCollection()->filter(fn($item) => str_contains(strtolower($item->status), 'ditolak'))->count();
                 @endphp
 
                 <div class="row g-2 mb-3">

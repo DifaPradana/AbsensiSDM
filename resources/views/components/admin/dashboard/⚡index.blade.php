@@ -19,7 +19,7 @@ new class extends Component
         return [
             'totalWaiting' => IzinAbsen::query()
                 ->whereHas('user') // user tidak soft delete
-                ->where('status', 'menunggu konfirmasi')
+                ->where('status', 'menunggu_hrd')
                 ->where('created_at', '>=', now()->subDays(3))
                 ->count(),
 
@@ -31,7 +31,7 @@ new class extends Component
 
             'totalRejected' => IzinAbsen::query()
                 ->whereHas('user')
-                ->where('status', 'ditolak')
+                ->where('status', 'LIKE', '%ditolak%')
                 ->where('created_at', '>=', $startOfMonth)
                 ->count(),
         ];
@@ -95,7 +95,16 @@ new class extends Component
 
                 </div>
 
-                <a href="{{ route('izin.page') }}" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1">
+                @php
+                $role = strtolower(Auth::user()->role->nama_role ?? '');
+                $izinRoute = match($role) {
+                'direktur' => 'direktur.izin.page',
+                'hrd' => 'hrd.izin.page',
+                default => 'izin.page',
+                };
+                @endphp
+
+                <a href="{{ route($izinRoute) }}" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1">
                     Lihat semua pengajuan
                     <i class="ti ti-arrow-right"></i>
                 </a>

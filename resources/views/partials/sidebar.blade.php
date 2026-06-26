@@ -87,7 +87,7 @@
                     </a>
                 </li>
 
-                @elseif (auth()->user()->role->nama_role == 'HRD')
+                @elseif (auth()->user()->role->nama_role == 'hrd')
                 <li class="nav-small-cap">
                     <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
                     <span class="hide-menu">Home</span>
@@ -139,7 +139,7 @@
                     <span class="hide-menu">Home</span>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="{{ route('dashboard.page') }}" aria-expanded="false">
+                    <a class="sidebar-link" href="{{ route('direktur.dashboard.page') }}" aria-expanded="false">
                         <span>
                             <i class="ti ti-layout-dashboard"></i>
                         </span>
@@ -148,38 +148,10 @@
                 </li>
                 <li class="nav-small-cap">
                     <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-                    <span class="hide-menu">Essential</span>
-                </li>
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="{{route('lokasi.page')}}" aria-expanded="false">
-                        <span>
-                            <i class="ti ti-gps"></i>
-                        </span>
-                        <span class="hide-menu">Lokasi</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="{{route('account.page')}}" aria-expanded="false">
-                        <span>
-                            <i class="ti ti-user-plus"></i>
-                        </span>
-                        <span class="hide-menu">Akun</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="{{route('role.page')}}" aria-expanded="false">
-                        <span>
-                            <i class="ti ti-user-plus"></i>
-                        </span>
-                        <span class="hide-menu">Role</span>
-                    </a>
-                </li>
-                <li class="nav-small-cap">
-                    <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
                     <span class="hide-menu">Absensi</span>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="{{route('absensi.page')}}" aria-expanded="false">
+                    <a class="sidebar-link" href="{{route('direktur.absensi.page')}}" aria-expanded="false">
                         <span>
                             <i class="ti ti-file-description"></i>
                         </span>
@@ -187,7 +159,7 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="{{route('izin.page')}}" aria-expanded="false">
+                    <a class="sidebar-link" href="{{route('direktur.izin.page')}}" aria-expanded="false">
                         <span>
                             <i class="ti ti-id"></i>
                         </span>
@@ -199,7 +171,7 @@
                     <span class="hide-menu">Dokumen</span>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="{{ route('exported-absensi.page') }}" aria-expanded="false">
+                    <a class="sidebar-link" href="{{ route('direktur.exported-absensi.page') }}" aria-expanded="false">
                         <span>
                             <i class="ti ti-file"></i>
                         </span>

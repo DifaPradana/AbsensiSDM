@@ -37,7 +37,13 @@ class DatabaseSeeder extends Seeder
         ]);
 
         Role::create([
-            'nama_role' => 'test role',
+            'nama_role' => 'hrd',
+            'jadwal_masuk' => '08:30:00',
+            'jadwal_pulang' => '10:00:00',
+        ]);
+
+        Role::create([
+            'nama_role' => 'direktur',
             'jadwal_masuk' => '08:30:00',
             'jadwal_pulang' => '10:00:00',
         ]);
@@ -59,11 +65,19 @@ class DatabaseSeeder extends Seeder
         ]);
 
         User::create([
-            'nama_karyawan' => 'testapi',
+            'nama_karyawan' => 'hrd',
             'is_active' => true,
             'is_password_default' => false,
-            'password' => 'loremipsum',
+            'password' => 'dips',
             'role_id' => 4,
+        ]);
+
+        User::create([
+            'nama_karyawan' => 'direktur',
+            'is_active' => true,
+            'is_password_default' => false,
+            'password' => 'dips',
+            'role_id' => 5,
         ]);
 
         LokasiAbsensi::create([

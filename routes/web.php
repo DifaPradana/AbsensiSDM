@@ -19,7 +19,7 @@ Route::group(['middleware' => ['auth', 'role:admin'], 'prefix' => 'admin'], func
     Route::livewire('/exported-absensi', 'admin.export-absensi.index')->name('exported-absensi.page');
 });
 
-Route::group(['middleware' => ['auth', 'role:HRD'], 'prefix' => 'hrd'], function () {
+Route::group(['middleware' => ['auth', 'role:hrd'], 'prefix' => 'hrd'], function () {
     Route::livewire('/dashboard', 'admin.dashboard.index')->name('hrd.dashboard.page');
     // Route::livewire('/account', 'admin.account.index')->name('account.page');
     // Route::livewire('/role', 'admin.role.index')->name('role.page');
@@ -31,10 +31,10 @@ Route::group(['middleware' => ['auth', 'role:HRD'], 'prefix' => 'hrd'], function
 
 
 Route::group(['middleware' => ['auth', 'role:direktur'], 'prefix' => 'direktur'], function () {
-    Route::livewire('/dashboard', 'admin.dashboard.index')->name('dashboard.page');
-    Route::livewire('/absensi', 'admin.absensi.index')->name('absensi.page');
-    Route::livewire('/pengajuan-izin', 'admin.izin.index')->name('izin.page');
-    Route::livewire('/exported-absensi', 'admin.export-absensi.index')->name('exported-absensi.page');
+    Route::livewire('/dashboard', 'admin.dashboard.index')->name('direktur.dashboard.page');
+    Route::livewire('/absensi', 'admin.absensi.index')->name('direktur.absensi.page');
+    Route::livewire('/pengajuan-izin', 'admin.izin.index')->name('direktur.izin.page');
+    Route::livewire('/exported-absensi', 'admin.export-absensi.index')->name('direktur.exported-absensi.page');
 });
 
 Route::group(['middleware' => ['auth'], 'prefix' => 'karyawan'], function () {

@@ -30,43 +30,62 @@ new class extends Component {
         $this->dispatch('show-edit-modal');
     }
 
-    // Opsi status yang boleh dipilih sesuai role & status saat ini
     public function getStatusOptionsProperty(): array
     {
-        $user  = Auth::user();
-        $role  = strtolower($user->role->nama_role ?? '');
-        $current = $this->izin->status ?? null;
+        if (!isset($this->izin) || $this->izin === null) {
+            return [];
+        }
 
-        // HRD: hanya bisa review saat menunggu_hrd
+        $user      = Auth::user();
+        $role      = strtolower($user->role->nama_role ?? '');
+        $current   = $this->izin->status ?? null;
+        $tipe_izin = $this->izin->tipe_izin ?? null;
+
         if ($role === 'hrd' && $current === 'menunggu_hrd') {
+            // Izin & sakit: HRD langsung approve tanpa ke direktur
+            if (in_array($tipe_izin, ['izin', 'sakit'])) {
+                return [
+                    'disetujui'   => 'Setujui',
+                    'ditolak_hrd' => 'Tolak',
+                ];
+            }
+
+            // Selain itu (cuti, dll): teruskan ke direktur
             return [
                 'menunggu_direktur' => 'Setujui → Teruskan ke Direktur',
                 'ditolak_hrd'       => 'Tolak',
             ];
         }
 
-        // Direktur: hanya bisa review saat menunggu_direktur
         if ($role === 'direktur' && $current === 'menunggu_direktur') {
             return [
-                'disetujui'         => 'Setujui',
-                'ditolak_direktur'  => 'Tolak',
+                'disetujui'        => 'Setujui',
+                'ditolak_direktur' => 'Tolak',
             ];
         }
 
-        // Fallback: tidak ada opsi (readonly)
         return [];
     }
 
     public function izinUpdate()
     {
-        $user    = Auth::user();
-        $role    = strtolower($user->role->nama_role ?? '');
-        $current = $this->izin->status;
+        if (!isset($this->izin) || $this->izin === null) {
+            return;
+        }
 
-        // Validasi transisi status yang valid
+        $user      = Auth::user();
+        $role      = strtolower($user->role->nama_role ?? '');
+        $current   = $this->izin->status;
+        $tipe_izin = $this->izin->tipe_izin ?? null;
+
+        // HRD punya 2 jalur tergantung tipe izin
+        $hrdAllowed = in_array($tipe_izin, ['izin', 'sakit'])
+            ? ['disetujui', 'ditolak_hrd']           // langsung selesai
+            : ['menunggu_direktur', 'ditolak_hrd'];   // lanjut ke direktur
+
         $allowedTransitions = [
-            'hrd'      => ['menunggu_hrd'       => ['menunggu_direktur', 'ditolak_hrd']],
-            'direktur' => ['menunggu_direktur'   => ['disetujui', 'ditolak_direktur']],
+            'hrd'      => ['menunggu_hrd'      => $hrdAllowed],
+            'direktur' => ['menunggu_direktur' => ['disetujui', 'ditolak_direktur']],
         ];
 
         $allowed = $allowedTransitions[$role][$current] ?? [];
@@ -83,7 +102,6 @@ new class extends Component {
 
         $updateData = ['status' => $this->status];
 
-        // Simpan siapa yang approve/reject beserta timestamp & note-nya
         if ($role === 'hrd') {
             $updateData['hrd_id']   = $user->user_id;
             $updateData['hrd_at']   = now();
@@ -96,7 +114,6 @@ new class extends Component {
             $updateData['direktur_note'] = $this->note;
         }
 
-        // Buat record absensi otomatis hanya saat fully disetujui
         if ($this->status === 'disetujui') {
             $this->buatAbsensiOtomatis($izin);
         }
@@ -109,18 +126,13 @@ new class extends Component {
 
         $label = match ($this->status) {
             'menunggu_direktur' => 'Disetujui HRD, menunggu Direktur',
-            'disetujui'         => 'Cuti disetujui',
+            'disetujui'         => 'Disetujui',
             'ditolak_hrd'       => 'Ditolak oleh HRD',
             'ditolak_direktur'  => 'Ditolak oleh Direktur',
             default             => 'Status diperbarui',
         };
 
-        LivewireAlert::title($label)
-            ->success()
-            ->timer(2500)
-            ->toast()
-            ->position('top-end')
-            ->show();
+        LivewireAlert::title($label)->success()->timer(2500)->toast()->position('top-end')->show();
     }
 
     private function buatAbsensiOtomatis(IzinAbsen $izin): void
@@ -132,37 +144,45 @@ new class extends Component {
         $tanggal = $mulai->copy();
 
         while ($tanggal->lte($akhir)) {
-            $sudahAda = Absensi::where('user_id', $user->user_id)
+            $existing = Absensi::where('user_id', $user->user_id)
                 ->whereDate('waktu_absen_masuk', $tanggal)
-                ->exists();
+                ->first();
 
-            if (!$sudahAda) {
-                Absensi::create([
-                    'user_id'               => $user->user_id,
-                    'tipe_absensi'          => $izin->tipe_izin,
-                    'waktu_absen_masuk'     => $tanggal->copy()->setTimeFromTimeString($role->jadwal_masuk),
-                    'waktu_absen_pulang'    => $tanggal->copy()->setTimeFromTimeString($role->jadwal_pulang),
-                    'lokasi_masuk'          => '-',
-                    'lokasi_pulang'         => '-',
-                    'latitude_masuk'        => '0.0',
-                    'longitude_masuk'       => '0.0',
-                    'latitude_pulang'       => '0.0',
-                    'longitude_pulang'      => '0.0',
-                    'status_absensi_masuk'  => '-',
-                    'status_absensi_pulang' => '-',
-                    'photo_masuk'           => $izin->dokumen_izin ?? null,
-                    'photo_pulang'          => $izin->dokumen_izin ?? null,
-                    'note_masuk'            => $izin->note ?? 'Dibuatkan otomatis dari pengajuan izin',
-                    'note_pulang'           => $izin->note ?? 'Dibuatkan otomatis dari pengajuan izin',
-                ]);
+            $data = [
+                'user_id'               => $user->user_id,
+                'tipe_absensi'          => $izin->tipe_izin,
+                'waktu_absen_masuk'     => $tanggal->copy()->setTimeFromTimeString($role->jadwal_masuk),
+                'waktu_absen_pulang'    => $tanggal->copy()->setTimeFromTimeString($role->jadwal_pulang),
+                'lokasi_masuk'          => '-',
+                'lokasi_pulang'         => '-',
+                'latitude_masuk'        => '0.0',
+                'longitude_masuk'       => '0.0',
+                'latitude_pulang'       => '0.0',
+                'longitude_pulang'      => '0.0',
+                'status_absensi_masuk'  => '-',
+                'status_absensi_pulang' => '-',
+                'photo_masuk'           => $izin->dokumen_izin ?? null,
+                'photo_pulang'          => $izin->dokumen_izin ?? null,
+                'note_masuk'            => $izin->note ?? 'Dibuatkan otomatis dari pengajuan izin',
+                'note_pulang'           => $izin->note ?? 'Dibuatkan otomatis dari pengajuan izin',
+            ];
+
+            if ($existing) {
+                // Overwrite jika alpha, skip jika sudah ada absensi nyata
+                if ($existing->tipe_absensi === 'alpha') {
+                    $existing->update($data);
+                }
+            } else {
+                Absensi::create($data);
             }
+
             $tanggal->addDay();
         }
     }
 };
 ?>
 
-<div>
+<div wire:poll.15s>
     <div class="modal fade" id="editIzinModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
