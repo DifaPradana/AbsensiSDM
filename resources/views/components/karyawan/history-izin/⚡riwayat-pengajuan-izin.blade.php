@@ -180,7 +180,7 @@ new class extends Component
                                 </div>
                                 @endif
 
-                                @if($izin->status === 'menunggu konfirmasi')
+                                @if($izin->status != 'disetujui')
                                 <div>
                                     <button
                                         onclick="confirm('Kamu akan menghapus izin secara permanen, apakah yakin?') || event.stopImmediatePropagation()"
