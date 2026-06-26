@@ -120,7 +120,7 @@ new class extends Component
                 'hadir' => 'abs-badge-hadir',
                 'izin' => 'abs-badge-izin',
                 'sakit' => 'abs-badge-sakit',
-                'alfa' => 'abs-badge-alfa',
+                'alpha' => 'abs-badge-alfa',
                 default => 'abs-badge-default',
                 };
 
@@ -160,7 +160,9 @@ new class extends Component
                             <div class="abs-row">
                                 <span class="abs-label">Status</span>
                                 <span class="abs-val">
-                                    @if($statusMasuk)
+                                    @if($tipe === 'alpha')
+                                    <span class="abs-badge abs-badge-alfa">Alpha</span>
+                                    @elseif($statusMasuk)
                                     <span class="abs-badge {{ $statusMasukClass }}">{{ $statusMasuk }}</span>
                                     @else
                                     <span class="abs-muted">—</span>
@@ -221,7 +223,9 @@ new class extends Component
                             <div class="abs-row">
                                 <span class="abs-label">Status</span>
                                 <span class="abs-val">
-                                    @if($statusPulang)
+                                    @if($tipe === 'alpha')
+                                    <span class="abs-badge abs-badge-alfa">Alpha</span>
+                                    @elseif($statusPulang)
                                     <span class="abs-badge {{ $statusPulangClass }}">{{ $statusPulang }}</span>
                                     @else
                                     <span class="abs-muted">—</span>

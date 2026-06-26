@@ -104,8 +104,8 @@ class CreateAlphaAbsensi extends Command
                     'longitude_masuk'       => 0,
                     'latitude_pulang'       => 0,
                     'longitude_pulang'      => 0,
-                    'status_absensi_masuk'  => '-',
-                    'status_absensi_pulang' => '-',
+                    'status_absensi_masuk'  => 'Alpha',
+                    'status_absensi_pulang' => 'Alpha',
                     'lokasi_masuk'          => '-',
                     'lokasi_pulang'         => '-',
                 ]);
