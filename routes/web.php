@@ -37,7 +37,7 @@ Route::group(['middleware' => ['auth', 'role:direktur'], 'prefix' => 'direktur']
     Route::livewire('/exported-absensi', 'admin.export-absensi.index')->name('exported-absensi.page');
 });
 
-Route::group(['middleware' => ['auth', 'nonadmin'], 'prefix' => 'karyawan'], function () {
+Route::group(['middleware' => ['auth'], 'prefix' => 'karyawan'], function () {
     Route::livewire('/post-absensi', 'karyawan.absensi')->name('karyawan.absensi.page');
     Route::livewire('/profile', 'karyawan.profile')->name('karyawan.profile.page');
     Route::livewire('/riwayat-kehadiran', 'karyawan.kehadiran')->name('karyawan.kehadiran.page');
