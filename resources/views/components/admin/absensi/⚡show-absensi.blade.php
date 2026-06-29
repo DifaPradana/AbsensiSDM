@@ -178,9 +178,11 @@ new class extends Component
                                     <th class="border px-4 py-3 text-center">Nama</th>
                                     <th class="border px-4 py-3 text-center">Role</th>
                                     <th class="border px-4 py-3 text-center">Status</th>
+                                    <th class="border px-4 py-3 text-center">Status Masuk</th>
                                     <th class="border px-4 py-3 text-center">Waktu Masuk</th>
                                     <th class="border px-4 py-3 text-center">Lokasi Masuk</th>
                                     <th class="border px-4 py-3 text-center">Note Masuk</th>
+                                    <th class="border px-4 py-3 text-center">Status Pulang</th>
                                     <th class="border px-4 py-3 text-center">Waktu Pulang</th>
                                     <th class="border px-4 py-3 text-center">Lokasi Pulang</th>
                                     <th class="border px-4 py-3 text-center">Note Pulang</th>
@@ -230,6 +232,15 @@ new class extends Component
                                         </span>
                                     </td>
                                     <td class="border px-4 py-3 text-center">
+                                        <h6 class="fw-semibold mb-0 fs-4">
+                                            @if(in_array(trim($absensi->tipe_absensi ?? ''), ['izin', 'sakit', 'cuti', 'alpha']))
+                                            -
+                                            @else
+                                            {{ $absensi->waktu_absen_masuk ? \Carbon\Carbon::parse($absensi->waktu_absen_masuk)->format('H:i') : '-' }}
+                                            @endif
+                                        </h6>
+                                    </td>
+                                    <td class="border px-4 py-3 text-center">
                                         @if($absensi->lokasi_masuk === 'Unknown')
                                         @if($absensi->latitude_masuk && $absensi->longitude_masuk)
                                         <a href="https://www.google.com/maps?q={{ $absensi->latitude_masuk }},{{ $absensi->longitude_masuk }}"
@@ -259,6 +270,15 @@ new class extends Component
                                         <span class="badge {{ $badgeClass }} rounded-3 fw-semibold">
                                             {{ $status }}
                                         </span>
+                                    </td>
+                                    <td class="border px-4 py-3 text-center">
+                                        <h6 class="fw-semibold mb-0 fs-4">
+                                            @if(in_array(trim($absensi->tipe_absensi ?? ''), ['izin', 'sakit', 'cuti', 'alpha']))
+                                            -
+                                            @else
+                                            {{ $absensi->waktu_absen_pulang ? \Carbon\Carbon::parse($absensi->waktu_absen_pulang)->format('H:i') : '-' }}
+                                            @endif
+                                        </h6>
                                     </td>
                                     <td class="border px-4 py-3 text-center">
                                         @if($absensi->lokasi_pulang === 'Unknown')
