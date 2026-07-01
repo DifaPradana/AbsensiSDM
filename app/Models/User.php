@@ -88,4 +88,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(IzinAbsen::class, 'user_id', 'user_id');
     }
+
+    public function dailyReport()
+    {
+        return $this->hasMany(DailyReport::class, 'user_id', 'user_id');
+    }
 }

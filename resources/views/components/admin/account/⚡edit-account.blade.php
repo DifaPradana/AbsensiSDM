@@ -11,6 +11,7 @@ new class extends Component
     public $user_id;
     public $nama_karyawan;
     public $password;
+    public $password_confirmation;
     public $role_id;
     public $status;
 
@@ -38,7 +39,8 @@ new class extends Component
         $this->nama_karyawan = $user->nama_karyawan;
         $this->role_id = $user->role_id;
         $this->status = $user->is_active;
-
+        $this->password = null;
+        $this->password_confirmation = null;
 
         $this->dispatch('show-edit-modal');
     }
@@ -50,7 +52,6 @@ new class extends Component
             ->show();
     }
 
-
     public function akunUpdate()
     {
         $message = [
@@ -59,40 +60,48 @@ new class extends Component
             'nama_karyawan.max' => 'nama_karyawan maksimal 100 karakter',
             'role_id.required' => 'Role wajib diisi',
             'status.required' => 'Status wajib diisi',
+            'password.min' => 'Password minimal 6 karakter',
+            'password.confirmed' => 'Konfirmasi password tidak cocok',
         ];
 
         $this->validate([
             'nama_karyawan' => ['required', 'string', 'min:3', 'max:100'],
             'role_id' => 'required',
             'status' => 'required',
+            // password opsional, hanya divalidasi jika diisi
+            'password' => ['nullable', 'string', 'min:6', 'confirmed'],
         ], $message);
 
         $user = User::find($this->user_id);
-        // dd($this->status);
+
         if (!$user) {
             $this->dispatch('sweet-alert', icon: 'error', title: 'User tidak ditemukan');
             return;
         }
 
-        if ($user) {
-            $user->update([
-                'nama_karyawan' => $this->nama_karyawan,
-                'role_id' => $this->role_id,
-                'is_active' => $this->status,
-            ]);
+        $data = [
+            'nama_karyawan' => $this->nama_karyawan,
+            'role_id' => $this->role_id,
+            'is_active' => $this->status,
+        ];
 
-
-            $this->dispatch('hide-edit-modal');
-            $this->reset();
-            $this->dispatch('success');
-            LivewireAlert::title('Berhasil Edit')
-                ->text('Berhasil edit data karyawan')
-                ->success()
-                ->timer(3000)
-                ->toast()
-                ->position('top-end')
-                ->show();
+        // password langsung di-assign mentah, hashing sudah ditangani di model
+        if (!empty($this->password)) {
+            $data['password'] = $this->password;
         }
+
+        $user->update($data);
+
+        $this->dispatch('hide-edit-modal');
+        $this->reset();
+        $this->dispatch('success');
+        LivewireAlert::title('Berhasil Edit')
+            ->text('Berhasil edit data karyawan')
+            ->success()
+            ->timer(3000)
+            ->toast()
+            ->position('top-end')
+            ->show();
     }
 };
 ?>
@@ -110,8 +119,8 @@ new class extends Component
                 </div>
                 <div class="modal-body">
                     <form wire:submit.prevent="akunUpdate">
-                        <div class=" mb-3">
-                            <label for="exampleInputNamaKaryawan1" class="form-label">Nama Karyawan</label>
+                        <div class="mb-3">
+                            <label for="nama_karyawan" class="form-label">Nama Karyawan</label>
                             <input wire:model="nama_karyawan" type="text" class="form-control" id="nama_karyawan"
                                 aria-describedby="NamaKaryawanHelp">
                             @error('nama_karyawan')
@@ -119,6 +128,21 @@ new class extends Component
                             @enderror
                         </div>
 
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password Baru</label>
+                            <input wire:model="password" type="password" class="form-control" id="password"
+                                placeholder="Kosongkan jika tidak ingin mengubah password">
+                            <small class="text-muted">Kosongkan jika tidak ingin mengubah password</small>
+                            @error('password')
+                            <span class="text-danger d-block">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password_confirmation" class="form-label">Konfirmasi Password Baru</label>
+                            <input wire:model="password_confirmation" type="password" class="form-control"
+                                id="password_confirmation">
+                        </div>
 
                         <div class="mb-3">
                             <label for="role" class="form-label">Role</label>
@@ -131,7 +155,7 @@ new class extends Component
                                 </option>
                                 @endforeach
                             </select>
-                            @error('role')
+                            @error('role_id')
                             <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
@@ -140,9 +164,9 @@ new class extends Component
                             <label for="status" class="form-label">Status akun</label>
                             <select wire:model="status" class="form-select" id="status"
                                 aria-label="Default select example">
-                                <option value="" selected>Status</option>
-                                <option value="0" selected>Nonaktif</option>
-                                <option value="1" selected>Aktif</option>
+                                <option value="">Status</option>
+                                <option value="0">Nonaktif</option>
+                                <option value="1">Aktif</option>
                             </select>
                             @error('status')
                             <span class="text-danger">{{ $message }}</span>

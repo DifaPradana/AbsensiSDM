@@ -204,6 +204,18 @@
                 </li>
                 <li class="nav-small-cap">
                     <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+                    <span class="hide-menu">Daily Report</span>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="{{route('karyawan.daily-report.page')}}" aria-expanded="false">
+                        <span>
+                            <i class="ti ti-file-description"></i>
+                        </span>
+                        <span class="hide-menu">Daily Report</span>
+                    </a>
+                </li>
+                <li class="nav-small-cap">
+                    <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
                     <span class="hide-menu">Izin</span>
                 </li>
                 <li class="sidebar-item">

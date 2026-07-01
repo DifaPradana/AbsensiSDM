@@ -15,8 +15,10 @@ Route::group(['middleware' => ['auth', 'role:admin'], 'prefix' => 'admin'], func
     Route::livewire('/role', 'admin.role.index')->name('role.page');
     Route::livewire('/lokasi', 'admin.lokasi.index')->name('lokasi.page');
     Route::livewire('/absensi', 'admin.absensi.index')->name('absensi.page');
+    Route::livewire('/daily-report', 'admin.daily-report.index')->name('daily-report.page');
     Route::livewire('/pengajuan-izin', 'admin.izin.index')->name('izin.page');
     Route::livewire('/exported-absensi', 'admin.export-absensi.index')->name('exported-absensi.page');
+    Route::livewire('/exported-daily-report', 'admin.daily-report.index')->name('exported-daily-report.page');
 });
 
 Route::group(['middleware' => ['auth', 'role:hrd'], 'prefix' => 'hrd'], function () {
@@ -42,6 +44,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'karyawan'], function () {
     Route::livewire('/profile', 'karyawan.profile')->name('karyawan.profile.page');
     Route::livewire('/riwayat-kehadiran', 'karyawan.kehadiran')->name('karyawan.kehadiran.page');
     Route::livewire('/izin-absen', 'karyawan.izin-absen')->name('karyawan.izin-absen.page');
+    Route::livewire('/daily-report', 'karyawan.daily_report')->name('karyawan.daily-report.page');
     Route::livewire('/history-izin-absen', 'karyawan.history-izin')->name('karyawan.history-izin');
 });
 
