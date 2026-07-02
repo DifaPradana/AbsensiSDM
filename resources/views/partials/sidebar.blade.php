@@ -74,10 +74,6 @@
                         <span class="hide-menu">Pengajuan Izin</span>
                     </a>
                 </li>
-                <li class="nav-small-cap">
-                    <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-                    <span class="hide-menu">Dokumen</span>
-                </li>
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="{{ route('exported-absensi.page') }}" aria-expanded="false">
                         <span>
@@ -86,7 +82,26 @@
                         <span class="hide-menu">Hasil Export Absensi</span>
                     </a>
                 </li>
-
+                <li class="nav-small-cap">
+                    <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+                    <span class="hide-menu">Daily Report</span>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="{{ route('daily-report.page') }}" aria-expanded="false">
+                        <span>
+                            <i class="ti ti-file-description"></i>
+                        </span>
+                        <span class="hide-menu">Daily Report</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="{{ route('exported-daily-report.page') }}" aria-expanded="false">
+                        <span>
+                            <i class="ti ti-file"></i>
+                        </span>
+                        <span class="hide-menu">Hasil Export Daily Report</span>
+                    </a>
+                </li>
                 @elseif (auth()->user()->role->nama_role == 'hrd')
                 <li class="nav-small-cap">
                     <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
@@ -120,10 +135,6 @@
                         <span class="hide-menu">Pengajuan Izin</span>
                     </a>
                 </li>
-                <li class="nav-small-cap">
-                    <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-                    <span class="hide-menu">Dokumen</span>
-                </li>
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="{{ route('hrd.exported-absensi.page') }}" aria-expanded="false">
                         <span>
@@ -132,7 +143,26 @@
                         <span class="hide-menu">Hasil Export Absensi</span>
                     </a>
                 </li>
-
+                <li class="nav-small-cap">
+                    <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+                    <span class="hide-menu">Daily Report</span>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="{{ route('daily-report.page') }}" aria-expanded="false">
+                        <span>
+                            <i class="ti ti-file-description"></i>
+                        </span>
+                        <span class="hide-menu">Daily Report</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="{{ route('exported-daily-report.page') }}" aria-expanded="false">
+                        <span>
+                            <i class="ti ti-file"></i>
+                        </span>
+                        <span class="hide-menu">Hasil Export Daily Report</span>
+                    </a>
+                </li>
                 @elseif (auth()->user()->role->nama_role == 'direktur')
                 <li class="nav-small-cap">
                     <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
@@ -166,10 +196,6 @@
                         <span class="hide-menu">Pengajuan Izin</span>
                     </a>
                 </li>
-                <li class="nav-small-cap">
-                    <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-                    <span class="hide-menu">Dokumen</span>
-                </li>
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="{{ route('direktur.exported-absensi.page') }}" aria-expanded="false">
                         <span>
@@ -178,10 +204,27 @@
                         <span class="hide-menu">Hasil Export Absensi</span>
                     </a>
                 </li>
-
-
+                <li class="nav-small-cap">
+                    <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+                    <span class="hide-menu">Daily Report</span>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="{{ route('daily-report.page') }}" aria-expanded="false">
+                        <span>
+                            <i class="ti ti-file-description"></i>
+                        </span>
+                        <span class="hide-menu">Daily Report</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="{{ route('exported-daily-report.page') }}" aria-expanded="false">
+                        <span>
+                            <i class="ti ti-file"></i>
+                        </span>
+                        <span class="hide-menu">Hasil Export Daily Report</span>
+                    </a>
+                </li>
                 @else
-
                 <li class="nav-small-cap">
                     <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
                     <span class="hide-menu">Absensi</span>
@@ -202,6 +245,7 @@
                         <span class="hide-menu">Riwayat Kehadiran</span>
                     </a>
                 </li>
+                @if (auth()->user()->role->nama_role == 'pegawai kantor')
                 <li class="nav-small-cap">
                     <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
                     <span class="hide-menu">Daily Report</span>
@@ -214,6 +258,8 @@
                         <span class="hide-menu">Daily Report</span>
                     </a>
                 </li>
+                @endif
+
                 <li class="nav-small-cap">
                     <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
                     <span class="hide-menu">Izin</span>

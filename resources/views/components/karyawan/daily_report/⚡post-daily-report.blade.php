@@ -42,7 +42,7 @@ new class extends Component
             return;
         }
 
-        $filename     = Str::uuid() . '.pdf';
+        $filename = str_replace(' ', '_', ucwords($user->nama_karyawan)) . '_' . now()->format('d-m-Y') . '.pdf';
         $relativePath = $this->dokumen_daily_report
             ->storePubliclyAs('dokumen-daily-report', $filename, 'public');
 

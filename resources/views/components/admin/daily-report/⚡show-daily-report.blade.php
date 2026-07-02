@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\DailyReport;
 use App\Jobs\ExportDailyReportJob;
+use App\Models\DailyReport;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Jantinnerezo\LivewireAlert\Facades\LivewireAlert;
@@ -16,6 +16,8 @@ new class extends Component
     public int $perPage     = 20;
     public bool $isExporting = false;
     public bool $exportDone  = false;
+    public bool $isExportingMonthly = false;
+    public bool $exportDoneMonthly  = false;
 
     protected $paginationTheme = 'bootstrap';
 
@@ -55,6 +57,7 @@ new class extends Component
         ExportDailyReportJob::dispatch(
             $this->tanggalAwal,
             $this->tanggalAkhir,
+            $this->search,
         );
     }
 
@@ -68,6 +71,35 @@ new class extends Component
             cache()->forget('export_done');
 
             LivewireAlert::title('Berhasil Export Daily Report')
+                ->success()
+                ->timer(10000)
+                ->toast()
+                ->position('top-end')
+                ->timerProgressBar()
+                ->show();
+        }
+    }
+
+    public function exportMonthly(): void
+    {
+        $this->isExportingMonthly = true;
+        $this->exportDoneMonthly  = false;
+
+        cache()->forget('export_monthly_done');
+
+        \App\Jobs\ExportDailyReportMonthlyJob::dispatch();
+    }
+
+    public function checkExportMonthly(): void
+    {
+        if (! $this->isExportingMonthly) return;
+
+        if (cache()->get('export_monthly_done')) {
+            $this->isExportingMonthly = false;
+            $this->exportDoneMonthly  = true;
+            cache()->forget('export_monthly_done');
+
+            LivewireAlert::title('Berhasil Export Daily Report Bulanan')
                 ->success()
                 ->timer(10000)
                 ->toast()
@@ -105,6 +137,10 @@ new class extends Component
     <div wire:poll.3s="checkExport"></div>
     @endif
 
+    @if($isExportingMonthly)
+    <div wire:poll.3s="checkExportMonthly"></div>
+    @endif
+
     <div class="card">
         <div class="card-body">
             <h5 class="card-title fw-semibold mb-4">Daily Report</h5>
@@ -131,21 +167,54 @@ new class extends Component
 
                 <div class="col-md-3 d-flex gap-2">
                     <button type="button" wire:click="resetFilter"
-                        class="btn btn-outline-secondary w-100">
-                        Reset
+                        class="btn btn-outline-secondary">
+                        <i class="ti ti-refresh"></i> Reset
                     </button>
 
-                    @if(!$isExporting)
-                    <button type="button" wire:click="exportZip"
-                        class="btn btn-success w-100 d-flex align-items-center justify-content-center gap-1">
-                        <i class="ti ti-file-zip"></i> Export ZIP
-                    </button>
-                    @else
-                    <button type="button" class="btn btn-success w-100 d-flex align-items-center justify-content-center gap-1" disabled>
-                        <span class="spinner-border spinner-border-sm" role="status"></span>
-                        Memproses...
-                    </button>
-                    @endif
+                    {{-- Dropdown Export --}}
+                    <div class="dropdown">
+                        <button type="button"
+                            class="btn btn-success dropdown-toggle d-flex align-items-center gap-1"
+                            data-bs-toggle="dropdown"
+                            @if($isExporting || $isExportingMonthly) disabled @endif>
+                            @if($isExporting || $isExportingMonthly)
+                            <span class="spinner-border spinner-border-sm" role="status"></span>
+                            Memproses...
+                            @else
+                            <i class="ti ti-download"></i> Export
+                            @endif
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <h6 class="dropdown-header text-uppercase text-xs">Pilih Jenis Export</h6>
+                            </li>
+                            <li>
+                                <button type="button" class="dropdown-item d-flex align-items-center gap-2"
+                                    wire:click="exportZip"
+                                    @if($isExporting) disabled @endif>
+                                    <i class="ti ti-file-zip text-success"></i>
+                                    <div>
+                                        <div class="fw-semibold">Export ZIP</div>
+                                        <small class="text-muted">Berdasarkan filter aktif</small>
+                                    </div>
+                                </button>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <button type="button" class="dropdown-item d-flex align-items-center gap-2"
+                                    wire:click="exportMonthly"
+                                    @if($isExportingMonthly) disabled @endif>
+                                    <i class="ti ti-file-zip text-primary"></i>
+                                    <div>
+                                        <div class="fw-semibold">Export Bulanan</div>
+                                        <small class="text-muted">Semua laporan bulan ini dan sudah dipisah per karyawan</small>
+                                    </div>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
 

@@ -18,17 +18,16 @@ Route::group(['middleware' => ['auth', 'role:admin'], 'prefix' => 'admin'], func
     Route::livewire('/daily-report', 'admin.daily-report.index')->name('daily-report.page');
     Route::livewire('/pengajuan-izin', 'admin.izin.index')->name('izin.page');
     Route::livewire('/exported-absensi', 'admin.export-absensi.index')->name('exported-absensi.page');
-    Route::livewire('/exported-daily-report', 'admin.daily-report.index')->name('exported-daily-report.page');
+    Route::livewire('/exported-daily-report', 'admin.export-daily-report.index')->name('exported-daily-report.page');
 });
 
 Route::group(['middleware' => ['auth', 'role:hrd'], 'prefix' => 'hrd'], function () {
     Route::livewire('/dashboard', 'admin.dashboard.index')->name('hrd.dashboard.page');
-    // Route::livewire('/account', 'admin.account.index')->name('account.page');
-    // Route::livewire('/role', 'admin.role.index')->name('role.page');
-    // Route::livewire('/lokasi', 'admin.lokasi.index')->name('lokasi.page');
     Route::livewire('/absensi', 'admin.absensi.index')->name('hrd.absensi.page');
     Route::livewire('/pengajuan-izin', 'admin.izin.index')->name('hrd.izin.page');
     Route::livewire('/exported-absensi', 'admin.export-absensi.index')->name('hrd.exported-absensi.page');
+    Route::livewire('/daily-report', 'admin.daily-report.index')->name('daily-report.page');
+    Route::livewire('/exported-daily-report', 'admin.export-daily-report.index')->name('exported-daily-report.page');
 });
 
 
@@ -37,6 +36,8 @@ Route::group(['middleware' => ['auth', 'role:direktur'], 'prefix' => 'direktur']
     Route::livewire('/absensi', 'admin.absensi.index')->name('direktur.absensi.page');
     Route::livewire('/pengajuan-izin', 'admin.izin.index')->name('direktur.izin.page');
     Route::livewire('/exported-absensi', 'admin.export-absensi.index')->name('direktur.exported-absensi.page');
+    Route::livewire('/daily-report', 'admin.daily-report.index')->name('daily-report.page');
+    Route::livewire('/exported-daily-report', 'admin.export-daily-report.index')->name('exported-daily-report.page');
 });
 
 Route::group(['middleware' => ['auth'], 'prefix' => 'karyawan'], function () {

@@ -18,11 +18,12 @@ class ExportDailyReportJob implements ShouldQueue
     public function __construct(
         protected ?string $tanggalAwal,
         protected ?string $tanggalAkhir,
+        protected ?string $search = null,
     ) {}
 
     public function handle(): void
     {
-        $filename    = 'daily_report_' . now()->format('Ymd_His') . '.zip';
+        $filename    = 'daily-report-' . now()->translatedFormat('F-Y') . '.zip';
         $storagePath = 'exports/' . $filename;
         $fullPath    = storage_path('app/public/' . $storagePath);
 
@@ -32,6 +33,11 @@ class ExportDailyReportJob implements ShouldQueue
 
         $reports = DailyReport::with('user')
             ->whereHas('user')
+            ->when($this->search, fn($q) => $q->whereHas(
+                'user',
+                fn($u) =>
+                $u->whereRaw('LOWER(nama_karyawan) LIKE ?', ['%' . strtolower($this->search) . '%'])
+            ))
             ->when($this->tanggalAwal,  fn($q) => $q->whereDate('created_at', '>=', $this->tanggalAwal))
             ->when($this->tanggalAkhir, fn($q) => $q->whereDate('created_at', '<=', $this->tanggalAkhir))
             ->latest()
@@ -41,6 +47,8 @@ class ExportDailyReportJob implements ShouldQueue
         $totalRows = 0;
 
         if ($zip->open($fullPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
+            $usedNames = [];
+
             foreach ($reports as $report) {
                 $filePath = storage_path('app/public/' . $report->path_dokumen);
 
@@ -48,11 +56,21 @@ class ExportDailyReportJob implements ShouldQueue
                     continue;
                 }
 
-                $namaKaryawan = str($report->user->nama_karyawan ?? 'unknown')
-                    ->slug('_')
-                    ->toString();
+                $namaKaryawan = str_replace(
+                    ' ',
+                    '_',
+                    ucwords($report->user->nama_karyawan ?? 'unknown')
+                );
 
-                $namaFile = $namaKaryawan . '_' . $report->daily_report_id . '.pdf';
+                $tanggal  = $report->created_at->format('d-m-Y');
+                $namaFile = $namaKaryawan . '_' . $tanggal . '.pdf';
+
+                if (isset($usedNames[$namaFile])) {
+                    $usedNames[$namaFile]++;
+                    $namaFile = $namaKaryawan . '_' . $tanggal . '_' . $usedNames[$namaFile] . '.pdf';
+                } else {
+                    $usedNames[$namaFile] = 1;
+                }
 
                 $zip->addFile($filePath, $namaFile);
                 $totalRows++;

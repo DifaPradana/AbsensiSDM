@@ -15,6 +15,6 @@ new class extends Component
 
 <div>
     <div class="row">
-        <livewire:admin.absensi.show-absensi />
+        <livewire:admin.daily-report.show-daily-report />
     </div>
 </div>

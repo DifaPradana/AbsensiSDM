@@ -22,3 +22,17 @@ Schedule::command('export:delete-old-absensi --days=7')
     ->at('00:00')
     ->withoutOverlapping()
     ->runInBackground();
+
+Schedule::command('export:delete-old-daily-report --days=7')
+    ->daily()
+    ->at('00:00')
+    ->withoutOverlapping()
+    ->runInBackground();
+
+Schedule::job(new \App\Jobs\ExportDailyReportMonthlyJob())
+    ->monthlyOn(1, '01:00') // tanggal 1, jam 01:00
+    ->withoutOverlapping();
+
+// Schedule::command('app:delete-daily-report')
+//     ->monthlyOn(5, '02:00')
+//     ->withoutOverlapping();

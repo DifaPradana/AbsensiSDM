@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\ExportAbsen;
+use App\Models\ExportDailyReport;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Storage;
@@ -13,7 +13,7 @@ new class extends Component
 
     public function deleteExport(int $id): void
     {
-        $export = ExportAbsen::findOrFail($id);
+        $export = ExportDailyReport::findOrFail($id);
         Storage::disk('public')->delete($export->path);
         $export->delete();
     }
@@ -21,10 +21,10 @@ new class extends Component
     public function render()
     {
         return $this->view([
-            'exports' => ExportAbsen::latest()->paginate($this->perPage),
+            'exports' => ExportDailyReport::latest()->paginate($this->perPage),
         ])
             ->layout('layouts.main')
-            ->title('Absensi | Riwayat Export');
+            ->title('Absensi | Riwayat Export Daily Report');
     }
 };
 ?>
@@ -39,7 +39,7 @@ new class extends Component
                         <p class="text-muted small mb-0">File tersimpan selama 7 hari, lalu otomatis dihapus.</p>
                     </div>
                     <span class="badge bg-primary-subtle text-primary fw-semibold px-3 py-2">
-                        Total: {{ ExportAbsen::count() }} file
+                        Total: {{ ExportDailyReport::count() }} file
                     </span>
                 </div>
             </div>
