@@ -13,10 +13,15 @@ class DeleteAbsensiPhotos extends Command
 
     public function handle(): int
     {
-        $cutoff  = now()->startOfMonth(); // awal bulan ini = batas bawah "bulan lalu"
-        $dryRun  = $this->option('dry-run');
+        // Rentang bulan lalu (misal dijalankan tgl 5 Juli -> target Juni)
+        $start = now()->subMonthNoOverflow()->startOfMonth();
+        $end   = now()->subMonthNoOverflow()->endOfMonth();
 
-        $records = Absensi::where('created_at', '<', $cutoff)
+        $dryRun = $this->option('dry-run');
+
+        $this->info("Target hapus foto absensi periode: {$start->toDateString()} s/d {$end->toDateString()}");
+
+        $records = Absensi::whereBetween('created_at', [$start, $end])
             ->where('tipe_absensi', 'hadir') // hanya hadir
             ->where(
                 fn($q) => $q
@@ -53,7 +58,7 @@ class DeleteAbsensiPhotos extends Command
         }
 
         $dryRun
-            ? $this->warn("Dry-run selesai. Tidak ada yang dihapus.")
+            ? $this->warn('Dry-run selesai. Tidak ada yang dihapus.')
             : $this->info("✅ {$deleted} foto berhasil dihapus.");
 
         return self::SUCCESS;

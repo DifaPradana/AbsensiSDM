@@ -9,7 +9,7 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('absensi:delete-photos')
-    ->monthlyOn(1, '02:00') // tanggal 1, jam 02:00
+    ->monthlyOn(5, '02:00') // tanggal 5, jam 02:00
     ->withoutOverlapping();
 
 Schedule::command('absensi:create-alpha')
