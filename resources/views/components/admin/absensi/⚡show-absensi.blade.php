@@ -220,15 +220,17 @@ new class extends Component
                                     </td>
                                     <td class="border px-4 py-3 text-center">
                                         @php
+                                        $statusMasuk = $absensi['status_absensi_masuk'] ?? '-';
                                         $badgeClass = match(true) {
-                                        $absensi['status_absensi_masuk'] === '-' => 'bg-danger',
-                                        $absensi['status_absensi_masuk'] === 'On Time' => 'bg-success',
-                                        str_starts_with($absensi['status_absensi_masuk'], 'Terlambat') => 'bg-warning',
+                                        $statusMasuk === '-' => 'bg-danger',
+                                        $statusMasuk === 'On Time' => 'bg-success',
+                                        str_starts_with($statusMasuk, 'Terlambat') => 'bg-warning',
+                                        strtolower($statusMasuk) === 'alpha' => 'bg-danger', // fix: case-insensitive
                                         default => 'bg-dark',
                                         };
                                         @endphp
                                         <span class="badge {{ $badgeClass }} rounded-3 fw-semibold">
-                                            {{ $absensi['status_absensi_masuk'] }}
+                                            {{ $statusMasuk }}
                                         </span>
                                     </td>
                                     <td class="border px-4 py-3 text-center">
@@ -261,6 +263,7 @@ new class extends Component
                                         @php
                                         $status = $absensi['status_absensi_pulang'] ?? '';
                                         $badgeClass = match(true) {
+                                        strtolower($status) === 'alpha' => 'bg-danger', // fix: tambah handling Alpha
                                         str_starts_with($status, '-') => 'bg-danger',
                                         str_starts_with($status, 'Pulang Lebih Cepat') => 'bg-warning',
                                         empty($status) => '',

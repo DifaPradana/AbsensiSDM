@@ -9,7 +9,6 @@ use Livewire\Attributes\On;
 
 new class extends Component
 {
-
     public $nama_karyawan;
     public $password;
     public $role;
