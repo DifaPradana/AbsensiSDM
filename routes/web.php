@@ -26,8 +26,8 @@ Route::group(['middleware' => ['auth', 'role:hrd'], 'prefix' => 'hrd'], function
     Route::livewire('/absensi', 'admin.absensi.index')->name('hrd.absensi.page');
     Route::livewire('/pengajuan-izin', 'admin.izin.index')->name('hrd.izin.page');
     Route::livewire('/exported-absensi', 'admin.export-absensi.index')->name('hrd.exported-absensi.page');
-    Route::livewire('/daily-report', 'admin.daily-report.index')->name('daily-report.page');
-    Route::livewire('/exported-daily-report', 'admin.export-daily-report.index')->name('exported-daily-report.page');
+    Route::livewire('/daily-report', 'admin.daily-report.index')->name('hrd.daily-report.page');
+    Route::livewire('/exported-daily-report', 'admin.export-daily-report.index')->name('hrd.exported-daily-report.page');
 });
 
 

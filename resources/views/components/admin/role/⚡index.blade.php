@@ -93,7 +93,7 @@ new class extends Component
                         <table class="w-full border border-gray-300 text-sm text-left">
                             <thead class="text-xs text-gray-700 uppercase bg-gray-100">
                                 <tr>
-                                    <th scope="col" class="border border px-4 py-3 text-center">Nama Role</th>
+                                    <th scope="col" class="border px-4 py-3 text-center">Nama Role</th>
                                     <th scope="col" class="border px-4 py-3 text-center">Jam Masuk</th>
                                     <th scope="col" class="border px-4 py-3 text-center">Jam Pulang</th>
                                     <!-- <th scope="col" class="border px-4 py-3 text-center">dibuat</th> -->
