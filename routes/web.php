@@ -36,8 +36,8 @@ Route::group(['middleware' => ['auth', 'role:direktur'], 'prefix' => 'direktur']
     Route::livewire('/absensi', 'admin.absensi.index')->name('direktur.absensi.page');
     Route::livewire('/pengajuan-izin', 'admin.izin.index')->name('direktur.izin.page');
     Route::livewire('/exported-absensi', 'admin.export-absensi.index')->name('direktur.exported-absensi.page');
-    Route::livewire('/daily-report', 'admin.daily-report.index')->name('daily-report.page');
-    Route::livewire('/exported-daily-report', 'admin.export-daily-report.index')->name('exported-daily-report.page');
+    Route::livewire('/daily-report', 'admin.daily-report.index')->name('direktur.daily-report.page');
+    Route::livewire('/exported-daily-report', 'admin.export-daily-report.index')->name('direktur.exported-daily-report.page');
 });
 
 Route::group(['middleware' => ['auth'], 'prefix' => 'karyawan'], function () {

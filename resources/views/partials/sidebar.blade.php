@@ -209,7 +209,7 @@
                     <span class="hide-menu">Daily Report</span>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="{{ route('daily-report.page') }}" aria-expanded="false">
+                    <a class="sidebar-link" href="{{ route('direktur.daily-report.page') }}" aria-expanded="false">
                         <span>
                             <i class="ti ti-file-description"></i>
                         </span>
@@ -217,7 +217,7 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="{{ route('exported-daily-report.page') }}" aria-expanded="false">
+                    <a class="sidebar-link" href="{{ route('direktur.exported-daily-report.page') }}" aria-expanded="false">
                         <span>
                             <i class="ti ti-file"></i>
                         </span>
